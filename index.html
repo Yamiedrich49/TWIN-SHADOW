@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — LIGHT LAB v6</title>
+<title>TWIN SHADOW — FIRST 90° / THEN 45°</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -67,18 +67,23 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .legend{padding-top:3px}
 @media(max-height:735px){.methodbar{margin-top:0}.methodbtn{height:29px}.heading{min-height:52px;padding-top:7px}.stage-area{min-height:170px}}
 @media(max-height:620px){.methodbtn{height:27px}.heading p{display:none}.heading{min-height:42px}.stage-area{min-height:140px}.legend{padding:0}}
+/* V7: compact twelve-stage progression, readable even at 320px. */
+.levels{gap:clamp(5px,1.55vw,10px);margin-top:8px}
+.levelbtn{width:16px;height:21px;flex:none}
+#scene:focus{outline:none}#scene:focus-visible{outline:2px solid rgba(31,166,176,.72);outline-offset:-2px}
+@media(max-height:620px){.levels{margin-top:4px}.bottom{min-height:48px}}
 </style>
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="brand">TWIN SHADOW<small>LIGHT LAB · 45°</small></div><div class="topt">
+<header class="top"><div class="brand">TWIN SHADOW<small id="degreeBrand">FIRST 90°</small></div><div class="topt">
 <button class="iconbtn" id="reset" title="この問題を最初から" aria-label="この問題を最初から"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7.3M4 4v6h6"/></svg></button>
 <button class="iconbtn" id="sound" title="音を切り替える" aria-label="音を切り替える"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg></button>
 <button class="iconbtn" id="menu" title="分析・設定" aria-label="分析・設定"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></header>
 
-<section class="heading"><div class="eyebrow" id="eyebrow">EXPERIMENT 01 / 06</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
+<section class="heading"><div class="eyebrow" id="eyebrow">STAGE 01 / 12</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
 <div class="methodbar" role="group" aria-label="ヒントの比較"><button class="methodbtn" data-method="A" aria-pressed="false">A · 透ける</button><button class="methodbtn" data-method="B" aria-pressed="false">B · さわる</button><button class="methodbtn active" data-method="C" aria-pressed="true">C · 両方</button></div>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体をドラッグして45度ずつ回転。指を曲げても回転方向が変わる。周囲で円を描くとひねり回転"></canvas><div class="stage-guide">立体を回す · ブロックを長押しすると対応する影が光る</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体を指で回転。最初は90度ずつ、後半から45度ずつ。指の向きを変えると回転軸も変わる"></canvas><div class="stage-guide">立体を回す · ブロックを長押しすると対応する影が光る</div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
 
@@ -86,17 +91,17 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 <footer class="bottom"><div id="status" class="status">立体をスワイプして回してみよう</div><nav class="levels" id="levels" aria-label="実験ステージを選択"></nav></footer>
 </main>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="検証データ"><div class="sheet"><div class="sheethead"><h2>回転の実験室</h2><button id="close" class="close" aria-label="閉じる">×</button></div>
-<p>上の A / B / C を切り替えて、同じ問題でヒントの効き方を比較できます。<b>A</b> は立体をガラスのように透かし、ブロックが重なる影ほど濃く表示。<b>B</b> は不透明の立体を長押しすると、そのブロックと対応する2つの影の部分が同時に光ります。<b>C</b> は両方を組み合わせます。立体の回転は引き続き45°刻みです。</p>
+<p>A / B / C を切り替えて、同じ問題でヒントの効き方を比較できます。<b>A</b> は立体をガラスのように透かし、ブロックが重なる影ほど濃く表示。<b>B</b> は不透明の立体を長押しすると、そのブロックと対応する2つの影の部分が同時に光ります。<b>C</b> は両方を組み合わせます。第1〜9問は90°、第10問から45°で回します。</p>
 <p>この実験での濃淡はブロックの投影の重なりを用いた簡略モデル。光の正確な透過距離を計算したものではありません。濃淡はヒントであり、クリア条件は従来どおりシルエットの一致です。</p>
 <div class="switchrow"><strong>回転音</strong><button id="soundToggle">ON</button></div>
 <div class="switchrow"><strong>自由に回す（目標を隠す）</strong><button id="freeToggle">OFF</button></div>
 <h3>この問題の数学</h3><div class="analysis" id="analysis">計算中…</div>
-<p>※立体自身の3軸を45°単位で回転します。目標も45°回転列から作成。正解判定は2方向の正射影の一致を比較します。</p>
+<p>※立体自身の3軸を回転します。第1〜9問は90°の姿勢のみ、第10〜12問は45°の姿勢を使用。正解判定は指定された投影の一致です。</p>
 <button class="sheetbutton" id="return">ゲームに戻る</button></div></div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),RAD=Math.PI/180;
-const ID=[1,0,0,0],STEP=45;
+const ID=[1,0,0,0];let STEP=90;
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
 const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
@@ -104,29 +109,37 @@ const norm=v=>{const h=Math.hypot(...v);return v.map(x=>x/h)};
 function qm(a,b){return [a[0]*b[0]-a[1]*b[1]-a[2]*b[2]-a[3]*b[3],a[0]*b[1]+a[1]*b[0]+a[2]*b[3]-a[3]*b[2],a[0]*b[2]-a[1]*b[3]+a[2]*b[0]+a[3]*b[1],a[0]*b[3]+a[1]*b[2]-a[2]*b[1]+a[3]*b[0]]}
 function qrot(axis,deg){const a=deg*RAD/2,w=Math.cos(a),s=Math.sin(a);return axis==='x'?[w,s,0,0]:axis==='y'?[w,0,s,0]:[w,0,0,s]}
 const qnormal=q=>norm(q);
-function qnext(q,axis,n){return qnormal(qm(q,qrot(axis,n*STEP)))} // POST multiplication: each rotation is around the object's OWN axis.
+function qnext(q,axis,n,step=STEP){return qnormal(qm(q,qrot(axis,n*step)))} // POST multiplication: each rotation is around the object's OWN axis.
 function qslerp(a,b,t){let cs=dot(a,b),v=b;if(cs<0){cs=-cs;v=b.map(n=>-n)}if(cs>.9995)return qnormal(a.map((n,i)=>n+(v[i]-n)*t));const angle=Math.acos(clamp(cs,-1,1)),sn=Math.sin(angle);return a.map((n,i)=>(Math.sin((1-t)*angle)*n+Math.sin(t*angle)*v[i])/sn)}
 function mat(q){let [w,x,y,z]=q;return [[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],[2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],[2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]]}
 const mv=(m,v)=>m.map(row=>dot(row,v));
-function makeGoal(sequence){let q=ID;for(const [axis,turn] of sequence)q=qnext(q,axis,turn);return q;}
+function makeGoal(sequence,step){let q=ID;for(const [axis,turn] of sequence)q=qnext(q,axis,turn,step);return q;}
 const STAGES=[
- {title:'はじめの45°。',sub:'立体を右にひとカリ。',blocks:[[0,0,0],[1,0,0],[2,0,0]],path:[['y',1]],views:1},
- {title:'ふたつの影。',sub:'ふたつのスクリーンを揃えよう。',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],path:[['y',1],['x',1]],views:2},
- {title:'立体の軸。',sub:'傾けたあと、ひねってみよう。',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1]],path:[['x',1],['z',1]],views:2},
- {title:'橋の向こう。',sub:'斜めからの影に注目。',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[2,2,0],[2,1,0],[2,0,0],[2,0,1]],path:[['y',1],['z',-1],['x',1]],views:2},
- {title:'折れ曲がる空間。',sub:'順番を変えると影も変わる。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],path:[['x',-1],['y',1],['z',1],['y',1]],views:2},
- {title:'TWIN SHADOW。',sub:'立体の3軸を使いこなそう。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2],[1,2,2]],path:[['y',1],['z',1],['x',-1],['y',-1],['z',1]],views:2}
+ // FIRST 90°: one shadow, then two. Goals are built ONLY from 90° turns.
+ {step:90,title:'よこから、まえへ',sub:'まずは1つの影。90°だけ回してみよう。',blocks:[[0,0,0],[1,0,0],[2,0,0]],path:[['y',1]],views:1},
+ {step:90,title:'エルのかたち',sub:'曲がった形の向きを変えよう。',blocks:[[0,0,0],[0,1,0],[1,0,0],[2,0,0]],path:[['z',1]],views:1},
+ {step:90,title:'見える、見えない',sub:'奥行きが変わると影も変わる。',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],path:[['x',1]],views:1},
+ {step:90,title:'ふたつの影',sub:'ここから2つの影をそろえよう。',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[1,1,2]],path:[['y',1]],views:2},
+ {step:90,title:'横から考える',sub:'片方だけでなく、もう片方も。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1]],path:[['x',1]],views:2},
+ {step:90,title:'くるり、90°',sub:'立体の向きと影をじっくり見よう。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,2,0],[2,2,1]],path:[['z',1]],views:2},
+ {step:90,title:'回して、もう一度',sub:'90°を2回。違う軸で回してみよう。',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[1,2,1],[2,2,1]],path:[['x',1],['y',1]],views:2},
+ {step:90,title:'立体のうらがわ',sub:'最初の回転で、次の見え方が変わる。',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1],[0,1,1],[0,2,1],[0,2,2]],path:[['y',1],['z',-1]],views:2},
+ {step:90,title:'90°マスター',sub:'90°を3回。最後の形に挑戦しよう。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],path:[['x',-1],['x',-1],['y',1]],views:2},
+ // NEW 45°: restart with only one shadow, add the second, then combine turns.
+ {step:45,title:'45°が解放！',sub:'回転が半分の角度に。まずは1つの影から。',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],path:[['y',1]],views:1},
+ {step:45,title:'斜めのひとカリ',sub:'今度は2つの影を45°でそろえよう。',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1],[2,2,1]],path:[['x',1]],views:2},
+ {step:45,title:'TWIN SHADOW',sub:'45°を2回。影の変化を追いかけよう。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1]],path:[['y',1],['x',1]],views:2}
 ];
-for(const s of STAGES){const lo=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),hi=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(lo[i]+hi[i])/2));s.goalQ=makeGoal(s.path);s.occ=new Set(s.blocks.map(p=>p.join(',')));}
+for(const s of STAGES){const lo=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),hi=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(lo[i]+hi[i])/2));s.goalQ=makeGoal(s.path,s.step);s.occ=new Set(s.blocks.map(p=>p.join(',')));}
 const camera=norm([5,7.1,9]),camRight=norm([camera[2],0,-camera[0]]),camUp=norm(cross(camera,camRight));
 function hull(pts){const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]);const cr=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const l=[],u=[];for(const p of a){while(l.length>1&&cr(l.at(-2),l.at(-1),p)<=0)l.pop();l.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(u.length>1&&cr(u.at(-2),u.at(-1),p)<=0)u.pop();u.push(p)}l.pop();u.pop();return l.concat(u)}
 function silhouette(c,shape,m,view,scale,cx,cy,fill,weld=false){c.fillStyle=fill;if(weld){c.strokeStyle=fill;c.lineJoin='round';c.lineWidth=1.2;}for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();if(weld)c.stroke();}}
 let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
 const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=320,UNIT=SIZE/6.4;
 let best={};
-let experiment='C', hintBlock=-1, holdTimer=null, hitFaces=[], peekGoal=false;try{const data=JSON.parse(localStorage.getItem('twin_shadow_v3')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
-function save(){try{localStorage.setItem('twin_shadow_v3',JSON.stringify({stage,sound:soundOn,best}))}catch(_){}}
-function canonical(q){const qq=q[0]<0?q.map(x=>-x):q;return qq.map(n=>Math.round(n*100000)/100000).join(',')}
+let experiment='C', hintBlock=-1, holdTimer=null, hitFaces=[], peekGoal=false;try{const data=JSON.parse(localStorage.getItem('twin_shadow_v7')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
+function save(){try{localStorage.setItem('twin_shadow_v7',JSON.stringify({stage,sound:soundOn,best}))}catch(_){}}
+function canonical(q){let qq=q.map(n=>Math.abs(n)<1e-9?0:n);if(qq.find(n=>n!==0)<0)qq=qq.map(n=>-n);return qq.map(n=>Math.round(n*100000)/100000).join(',')}
 const maskCache=new Map();
 function maskFor(sindex,pose,view){const key=sindex+'|'+view+'|'+canonical(pose);if(maskCache.has(key))return maskCache.get(key);const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d',{willReadFrequently:true});silhouette(c,STAGES[sindex].shape,mat(pose),view,UNIT,SIZE/2,SIZE/2,'#fff');const rgba=c.getImageData(0,0,SIZE,SIZE).data,bits=new Uint8Array(SIZE*SIZE);for(let i=0;i<bits.length;i++)bits[i]=rgba[i*4+3]>110?1:0;maskCache.set(key,bits);if(maskCache.size>1300){const it=maskCache.keys();for(let i=0;i<300;i++)maskCache.delete(it.next().value)}return bits;}
 function iou(a,b){let common=0,un=0;for(let i=0;i<a.length;i++){if(a[i]|b[i])un++;if(a[i]&b[i])common++}return un?common/un:1;}
@@ -247,18 +260,23 @@ function tone(freq,dur,vol,delay=0){if(!soundOn)return;setupAudio();if(!audio)re
 let lastClick=0;function clickSound(){const now=performance.now();if(now-lastClick<34)return;lastClick=now;tone(460,.050,.014)}
 function successSound(){tone(659.255,.42,.030);tone(1318.51,.25,.0035,.015)} // A single pitch with octave overtone: no clashing chord.
 function status(msg){$('status').textContent=msg}
-function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title}`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
-function setStage(i){clearHint();stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];$('eyebrow').textContent=`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;status('立体を指で回してみよう');updateLevels();save();refresh()}
+function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title} · ${s.step}°`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
+function setStage(i){clearHint();stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];STEP=s.step;
+ $('degreeBrand').textContent=STEP===90?'FIRST 90°':'UNLOCKED · 45°';
+ $('eyebrow').textContent=stage===9?'NEW · 45° UNLOCKED':`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')} · ${STEP}°`;
+ $('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;
+ status(stage===9?'NEW! 45°でカリッと回そう':`いまは ${STEP}° ずつ回せるよ`);
+ updateLevels();save();refresh()}
 // Each pointer segment is mapped into one of the three CURRENT object-local axes.
 // No axis selector and no global X/Y lock. After every detent, classification starts afresh.
-const DETENT_PX=36, TOUCH_MIN=3;
+const TOUCH_MIN=3;function detentPx(){return STEP===90?50:36;}
 function localAxisForVector(dx,dy,pose,spin=false){const m=mat(pose);const omega=spin?camera: [camUp[0]*dx+camRight[0]*dy,camUp[1]*dx+camRight[1]*dy,camUp[2]*dx+camRight[2]*dy];let axis='x',sign=1,best=-1;
  for(let i=0;i<3;i++){const basis=[m[0][i],m[1][i],m[2][i]],score=dot(basis,omega);if(Math.abs(score)>best){best=Math.abs(score);axis='xyz'[i];sign=score<0?-1:1;}}
  return {axis,sign};}
-function rotateDirect(axis,n){if(!n||finished)return;q=qnext(q,axis,n);moves+=Math.abs(n);clickSound();status(`${moves} カリッ · 45°ずつ`);refresh();if(!free)checkWin();}
+function rotateDirect(axis,n){if(!n||finished)return;q=qnext(q,axis,n);moves+=Math.abs(n);clickSound();status(`${moves} カリッ · ${STEP}°ずつ`);refresh();if(!free)checkWin();}
 function finalizeDrag(cancel=false){if(!drag)return;const d=drag;drag=null;
  if(cancel){displayQ=q.slice();refresh();return;}
- const n=d.axis?Math.round(d.progress/DETENT_PX):0;
+ const n=d.axis?Math.round(d.progress/detentPx()):0;
  if(n&&!finished){rotateDirect(d.axis,n*d.sign);} // swipe that passed half a detent snaps to 45°
  runAnim(q.slice(),94,()=>{if(!free)checkWin()});
 }
@@ -283,32 +301,32 @@ function processDrag(pt){if(!drag)return;const d=drag;let dx=pt.x-d.anchor.x,dy=
  let movement=dx*d.startUnit[0]+dy*d.startUnit[1];
  // For counter-motion, undo fractional rotation instead of freezing input.
  d.progress=movement;
- const steps=Math.trunc(Math.abs(movement)/DETENT_PX);
- if(steps>=1){const count=Math.min(12,steps),direction=Math.sign(movement);for(let k=0;k<count;k++){q=qnext(q,d.axis,d.sign*direction);moves++;clickSound();}status(`${moves} カリッ · 45°ずつ`);d.anchor={x:d.anchor.x+d.startUnit[0]*DETENT_PX*count*direction,y:d.anchor.y+d.startUnit[1]*DETENT_PX*count*direction};d.axis=null;d.progress=0;d.baseQ=q.slice(); // next movement may choose a DIFFERENT local axis
+ const steps=Math.trunc(Math.abs(movement)/detentPx());
+ if(steps>=1){const count=Math.min(12,steps),direction=Math.sign(movement);for(let k=0;k<count;k++){q=qnext(q,d.axis,d.sign*direction);moves++;clickSound();}status(`${moves} カリッ · ${STEP}°ずつ`);d.anchor={x:d.anchor.x+d.startUnit[0]*detentPx()*count*direction,y:d.anchor.y+d.startUnit[1]*detentPx()*count*direction};d.axis=null;d.progress=0;d.baseQ=q.slice(); // next movement may choose a DIFFERENT local axis
    if(!free)checkWin();}
- if(d.axis)displayQ=qnext(q,d.axis,d.sign*d.progress/DETENT_PX);else displayQ=q.slice();
+ if(d.axis)displayQ=qnext(q,d.axis,d.sign*d.progress/detentPx());else displayQ=q.slice();
  refresh();d.latest=pt;
 }
 function move(e){if(!pointers.has(e.pointerId))return;const pt=getLocal(e);pointers.set(e.pointerId,pt);
- if(twist&&pointers.size>=2){const pts=[...pointers.values()],angle=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);let delta=angle-twist.lastAngle;while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;twist.accum+=delta;twist.lastAngle=angle;const units=twist.accum/(Math.PI/4),n=Math.trunc(Math.abs(units));if(n){const turn=n*Math.sign(units)*twist.axis.sign;q=qnext(q,twist.axis.axis,turn);moves+=n;twist.accum-=n*Math.sign(units)*Math.PI/4;for(let i=0;i<n;i++)clickSound();twist.axis=localAxisForVector(0,0,q,true);twist.baseQ=q.slice();if(!free)checkWin();}displayQ=qnext(q,twist.axis.axis,twist.axis.sign*twist.accum/(Math.PI/4));refresh();return;}
+ if(twist&&pointers.size>=2){const pts=[...pointers.values()],angle=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);let delta=angle-twist.lastAngle;while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;twist.accum+=delta;twist.lastAngle=angle;const units=twist.accum/(STEP*RAD),n=Math.trunc(Math.abs(units));if(n){const turn=n*Math.sign(units)*twist.axis.sign;q=qnext(q,twist.axis.axis,turn);moves+=n;twist.accum-=n*Math.sign(units)*STEP*RAD;for(let i=0;i<n;i++)clickSound();twist.axis=localAxisForVector(0,0,q,true);twist.baseQ=q.slice();if(!free)checkWin();}displayQ=qnext(q,twist.axis.axis,twist.axis.sign*twist.accum/(STEP*RAD));refresh();return;}
  if(drag&&drag.id===e.pointerId)processDrag(pt);
 }
-function up(e,cancel=false){if(!pointers.has(e.pointerId))return;clearHint();pointers.delete(e.pointerId);try{scene.releasePointerCapture(e.pointerId)}catch(_){}if(twist){if(!cancel&&Math.abs(twist.accum)>.25*(Math.PI/4)&&!finished){q=qnext(q,twist.axis.axis,twist.axis.sign*Math.sign(twist.accum));moves++;clickSound();}twist=null;drag=null;runAnim(q.slice(),90,()=>{if(!free)checkWin()});if(!pointers.size)$('stagearea').classList.remove('touching');return;}
+function up(e,cancel=false){if(!pointers.has(e.pointerId))return;clearHint();pointers.delete(e.pointerId);try{scene.releasePointerCapture(e.pointerId)}catch(_){}if(twist){if(!cancel&&Math.abs(twist.accum)>.25*(STEP*RAD)&&!finished){q=qnext(q,twist.axis.axis,twist.axis.sign*Math.sign(twist.accum));moves++;clickSound();}twist=null;drag=null;runAnim(q.slice(),90,()=>{if(!free)checkWin()});if(!pointers.size)$('stagearea').classList.remove('touching');return;}
  if(drag&&drag.id===e.pointerId){finalizeDrag(cancel);}if(!pointers.size)$('stagearea').classList.remove('touching');}
 scene.addEventListener('pointerdown',down);scene.addEventListener('pointermove',move);scene.addEventListener('pointerup',e=>up(e));scene.addEventListener('pointercancel',e=>up(e,true));scene.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))up(e,true)});
 scene.addEventListener('keydown',e=>{const axis={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowUp:['x',1],ArrowDown:['x',-1],e:['z',1],q:['z',-1]};if(!axis[e.key]||finished)return;e.preventDefault();rotateOnce(...axis[e.key])});
-function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,92,()=>{status(`${moves} カリッ · 45°ずつ`);if(!free)checkWin()});}
-function checkWin(){if(finished||free||!matchingPose(q))return;finished=true;successSound();if(best[stage]==null||moves<best[stage])best[stage]=moves;save();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}カリッで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':'次の形へ →';$('winoverlay').classList.add('on');status(`CLEAR · ${moves}回 · BEST ${best[stage]}回`);updateLevels();}
+function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,92,()=>{status(`${moves} カリッ · ${STEP}°ずつ`);if(!free)checkWin()});}
+function checkWin(){if(finished||free||!matchingPose(q))return;finished=true;successSound();if(best[stage]==null||moves<best[stage])best[stage]=moves;save();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':stage===8?'90°マスター！':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}カリッで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':stage===8?'45°を解放する →':'次の形へ →';$('winoverlay').classList.add('on');status(`CLEAR · ${moves}回 · BEST ${best[stage]}回`);updateLevels();}
 function soundUI(){$('soundToggle').textContent=soundOn?'ON':'OFF';$('soundToggle').classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#249ba7':'#9da9ac'}
 function toggleSound(){soundOn=!soundOn;save();soundUI();if(soundOn)clickSound();}$('sound').addEventListener('click',toggleSound);$('soundToggle').addEventListener('click',toggleSound);
 $('reset').addEventListener('click',()=>setStage(stage));$('next').addEventListener('click',()=>setStage((stage+1)%STAGES.length));
 $('freeToggle').addEventListener('click',()=>{clearHint();free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);status(free?'自由回転 · 3軸を試そう':'2つの影をそろえよう');refresh()});
 function depth3(){let seen=new Set([canonical(ID)]),front=[ID],layers=[1];for(let i=1;i<=3;i++){const next=[];for(const q of front)for(const axis of ['x','y','z'])for(const turn of [-1,1]){const b=qnext(q,axis,turn),k=canonical(b);if(seen.has(k))continue;seen.add(k);next.push(b)}front=next;layers.push(next.length)}return layers}
-function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>立体自身の45°回転</b>を組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、指の移動方向から3軸を自動的に選びます。<br>3軸を各±45°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>以前の「8×8＝64姿勢」は固定2軸に限る数え方でした。3軸の45°回転を任意の順序で重ねる場合、64姿勢には限定されません。ランダム正解率も安易には表示しません。</small>`}
+function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>${STEP}°回転</b>のみを組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、指の移動方向から3軸を自動的に選びます。<br>3軸を各±${STEP}°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>90°回転だけのステージでは最大24の空間姿勢です。45°解放後は順序によってさらに多くの姿勢に到達できます。ランダム正解率は未検証なので表示していません。</small>`}
 function openModal(){updateAnalysis();$('modal').classList.add('show')};function closeModal(){$('modal').classList.remove('show');refresh()}
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-window.__twinLab={getState:()=>({stage,step:45,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice()};
+window.__twinLab={getState:()=>({stage,step:STEP,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice(),stages:()=>STAGES.map(s=>({title:s.title,step:s.step,views:s.views,path:s.path}))};
 // Optional target-only peek without opening another panel. Hold the existing legend.
 const gp=$('goalPeek');
 function setPeek(v){peekGoal=!!v;gp.classList.toggle('pressed',peekGoal);refresh();}

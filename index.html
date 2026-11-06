@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — LIGHT LAB v5</title>
+<title>TWIN SHADOW — LIGHT LAB v6</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -24,7 +24,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .orientation{position:absolute;top:7px;left:8px;font-size:10px;font-variant-numeric:tabular-nums;color:#90a9ac;letter-spacing:.08em;font-weight:650;pointer-events:none;opacity:.85}
 .shadows{margin-top:8px;display:flex;gap:11px;justify-content:center;flex:none;min-height:0}.shadowbox{position:relative;flex:0 1 190px;min-width:0;max-width:190px;aspect-ratio:1.1;border:1px solid #ddeae9;border-radius:20px;background:#fff;padding:10px 9px 7px;box-shadow:0 9px 24px #174b4f08;transition:border-color .15s,background .15s}.shadowbox.ok{border-color:#54c6c4;background:#f9fffe}
 .shadowbox .head{display:flex;justify-content:space-between;align-items:center;color:#859da2;font-size:10px;font-weight:820;letter-spacing:.11em}.badge-check{color:#b9cacb;font-size:11px;border:1px solid #d7e3e2;width:17px;height:17px;display:grid;place-items:center;border-radius:50%;line-height:1}.shadowbox.ok .badge-check{background:#12b6ab;border-color:#12b6ab;color:white}.shadowbox canvas{display:block;width:100%;height:calc(100% - 17px)}.shadows.single .shadowbox:nth-child(2){display:none}.shadows.single .shadowbox{max-width:190px;flex-basis:190px}
-.legend{margin-top:8px;flex:none;text-align:center;display:flex;gap:17px;justify-content:center;color:#8fa4a8;font-size:10px;font-weight:680}.legend .legendpart{display:flex;align-items:center;gap:5px}.swatch{width:11px;height:11px;border:1px solid #a3b7bb;border-radius:3px;background:#dfe8ea}.swatch.live{background:#21b8bb;border-color:#21b8bb}
+.legend{margin-top:8px;flex:none;text-align:center;display:flex;gap:17px;justify-content:center;color:#8fa4a8;font-size:10px;font-weight:680}.legend .legendpart{display:flex;align-items:center;gap:5px}.swatch{width:11px;height:11px;border:1px solid #a3b7bb;border-radius:3px;background:#dfe8ea}.swatch.live{background:#21b8bb;border-color:#21b8bb}.swatch:not(.live){border-color:#4b767d}.goalpeek{border:0;background:transparent;color:#668f95;font-weight:760;font-size:10px;padding:3px 4px;border-radius:7px;touch-action:none}.goalpeek.pressed{background:#e0f0f0;color:#285e67}
 .bottom{margin-top:auto;padding-top:8px;flex:none;min-height:69px}.status{min-height:17px;text-align:center;color:#78989d;font-size:11px;font-weight:710;letter-spacing:.01em}.levels{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px}.levelbtn{width:20px;height:20px;border:0;border-radius:50%;color:#9db9bd;font-size:10px;font-weight:800;background:transparent;display:grid;place-items:center;padding:0;position:relative}.levelbtn:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#d3e5e5;z-index:0}.levelbtn>span{position:relative;z-index:2;font-size:0}.levelbtn.active:before{width:13px;height:13px;background:#0cadb5;box-shadow:0 0 0 4px #d9f3f2}.levelbtn.done:before{background:#73c9c7}.levelbtn.active:focus-visible{outline-offset:4px}
 .winoverlay{z-index:4;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transform:translateY(7px) scale(.97);transition:opacity .22s,transform .28s}.winoverlay.on{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}.winpanel{background:#ffffffed;backdrop-filter:blur(16px);border:1px solid #c0e9e6;border-radius:25px;padding:22px 25px;text-align:center;box-shadow:0 17px 60px #185b5c24;min-width:230px;max-width:90%}.winpanel .stars{color:#16b3b5;font-size:23px;letter-spacing:6px;font-weight:750}.winpanel h2{font-size:22px;letter-spacing:.04em;margin:8px 0 3px}.winpanel p{font-size:11px;color:#6e9297;line-height:1.6;margin:5px 0}.winpanel button{color:white;background:#0daeb5;border:0;border-radius:99px;padding:11px 22px;font-weight:750;font-size:12px;margin-top:9px}
 .modal{position:fixed;inset:0;background:#153f4970;display:none;align-items:flex-end;justify-content:center;z-index:20;padding:12px;backdrop-filter:blur(3px)}.modal.show{display:flex}.sheet{width:100%;max-width:490px;max-height:87dvh;overflow:auto;background:#fff;border-radius:25px;padding:21px 21px calc(22px + env(safe-area-inset-bottom,0px));box-shadow:0 16px 75px #163f4645}.sheethead{display:flex;align-items:center;justify-content:space-between}.sheet h2{margin:0;font-size:18px}.sheet h3{font-size:10px;color:#8ba5a9;letter-spacing:.17em;margin:21px 0 10px}.close{background:transparent;border:0;font-size:25px;color:#8eaaae;padding:0 3px}.sheet p{font-size:12px;color:#729197;line-height:1.85;margin:8px 0}.analysis{font-size:12px;line-height:1.9;color:#57797d;background:#f5fbfa;border:1px solid #dfefed;padding:12px 13px;border-radius:15px}.analysis b{font-variant-numeric:tabular-nums;color:#098f99}.sheetbutton{border:0;border-radius:13px;background:#e9f8f6;color:#197d85;padding:12px;font-weight:780;width:100%;font-size:12px;margin-top:14px}.switchrow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0}.switchrow strong{font-size:13px}.switchrow button{background:#eaf5f3;color:#178e97;border-radius:20px;border:0;padding:7px 15px;font-size:11px;font-weight:800}.switchrow button.off{background:#f0f1f1;color:#84999c}
@@ -82,7 +82,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
 
-<div class="legend"><span class="legendpart"><i class="swatch"></i>目標の影</span><span class="legendpart"><i class="swatch live"></i>動かしている影</span></div>
+<div class="legend"><button id="goalPeek" class="legendpart goalpeek" type="button" aria-label="押している間、目標の影だけ表示"><i class="swatch"></i>目標を長押し</button><span class="legendpart"><i class="swatch live"></i>動かしている影</span></div>
 <footer class="bottom"><div id="status" class="status">立体をスワイプして回してみよう</div><nav class="levels" id="levels" aria-label="実験ステージを選択"></nav></footer>
 </main>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="検証データ"><div class="sheet"><div class="sheethead"><h2>回転の実験室</h2><button id="close" class="close" aria-label="閉じる">×</button></div>
@@ -124,7 +124,7 @@ function silhouette(c,shape,m,view,scale,cx,cy,fill,weld=false){c.fillStyle=fill
 let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
 const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=320,UNIT=SIZE/6.4;
 let best={};
-let experiment='C', hintBlock=-1, holdTimer=null, hitFaces=[];try{const data=JSON.parse(localStorage.getItem('twin_shadow_v3')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
+let experiment='C', hintBlock=-1, holdTimer=null, hitFaces=[], peekGoal=false;try{const data=JSON.parse(localStorage.getItem('twin_shadow_v3')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
 function save(){try{localStorage.setItem('twin_shadow_v3',JSON.stringify({stage,sound:soundOn,best}))}catch(_){}}
 function canonical(q){const qq=q[0]<0?q.map(x=>-x):q;return qq.map(n=>Math.round(n*100000)/100000).join(',')}
 const maskCache=new Map();
@@ -136,6 +136,31 @@ function resizeCanvas(){const rect=scene.getBoundingClientRect(),ratio=Math.min(
 // Opaque per-view offscreen masks. Overlapping solid geometry is a UNION, never a stack of translucent layers.
 const shadowScratch=[document.createElement('canvas'),document.createElement('canvas'),document.createElement('canvas')];
 for(const c of shadowScratch){c.width=SIZE;c.height=SIZE;}
+// The target is never painted under the live silhouette alone. A precisely sampled,
+// high-resolution external edge is drawn LAST so the complete goal stays readable.
+// Precompute just 2 outlines per stage; no per-frame pixel processing or blurry CSS filters.
+const goalOutlineCache=new Map();
+function goalOutline(s,view){
+ const key=stage+'|'+view;
+ if(goalOutlineCache.has(key))return goalOutlineCache.get(key);
+ const R=SIZE*2,mask=document.createElement('canvas'),outline=document.createElement('canvas');
+ mask.width=mask.height=outline.width=outline.height=R;
+ const mc=mask.getContext('2d'),ec=outline.getContext('2d');
+ silhouette(mc,s.shape,mat(s.goalQ),view,UNIT*2,R/2,R/2,'#fff',true);
+ // 3 high-resolution source pixels = approximately 1px on a phone's screen.
+ // Only the OUTSIDE border remains; internal cube seams are removed mathematically.
+ const radius=3,dirs=16;
+ ec.globalAlpha=1;ec.fillStyle='#547d84';
+ for(let j=0;j<dirs;j++){
+  const a=Math.PI*2*j/dirs;
+  ec.drawImage(mask,Math.round(Math.cos(a)*radius),Math.round(Math.sin(a)*radius));
+ }
+ ec.globalCompositeOperation='destination-out';ec.drawImage(mask,0,0);
+ ec.globalCompositeOperation='source-in';ec.fillStyle='#4b767d';ec.fillRect(0,0,R,R);
+ ec.globalCompositeOperation='source-over';
+ goalOutlineCache.set(key,outline);
+ return outline;
+}
 function flatShadow(shape,m,view,scratch,color,depth=false){
  const c=scratch.getContext('2d');c.clearRect(0,0,SIZE,SIZE);c.globalAlpha=1;
  if(depth){ // Projected transparent blocks: overlapping areas naturally darken.
@@ -152,14 +177,23 @@ function wall(view,project,model,gmodel,s){
  ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();
  ctx.fillStyle='rgba(255,255,255,.86)';ctx.fill();ctx.strokeStyle='rgba(126,190,190,.31)';ctx.lineWidth=.75;ctx.stroke();
  ctx.save();ctx.transform(a,b,c,d2,p0[0],p0[1]);
- if(!free)ctx.drawImage(flatShadow(s.shape,gmodel,view,shadowScratch[0],'#dae7e8'),0,0);
+ // 1: goal's quiet, complete shape; 2: live projection, translucent enough to
+ // show overlap; 3: selected-block hint; 4: goal edge ALWAYS on top.
+ if(!free)ctx.drawImage(flatShadow(s.shape,gmodel,view,shadowScratch[0],'#dce8ea'),0,0);
  const depth=experiment!=='B';
- ctx.drawImage(flatShadow(s.shape,model,view,shadowScratch[1],depth?'#05aebd':'#21b6bd',depth),0,0);
+ if(!peekGoal){
+ ctx.globalAlpha=depth?.76:.67;
+ ctx.drawImage(flatShadow(s.shape,model,view,shadowScratch[1],depth?'#079da9':'#16b5ba',depth),0,0);
+ ctx.globalAlpha=1;
  if(hintBlock>=0&&experiment!=='A'&&!free){
-  ctx.globalAlpha=.86;
-  ctx.drawImage(flatShadow([s.shape[hintBlock]],model,view,shadowScratch[2],'#f3af5f'),0,0);
+  ctx.globalAlpha=.91;
+  ctx.drawImage(flatShadow([s.shape[hintBlock]],model,view,shadowScratch[2],'#f2aa55'),0,0);
   ctx.globalAlpha=1;
  }
+ } // End live projection: holding the legend shows only the target.
+ // Thin antialiased vector-like silhouette contour: goal remains visible even
+ // when the live shadow completely covers or crosses it. No dashed/thick edges.
+ if(!free){ctx.globalAlpha=.99;ctx.drawImage(goalOutline(s,view),0,0,SIZE,SIZE);ctx.globalAlpha=1;}
  ctx.restore();
  const ok=!free&&!animation&&!drag&&!twist&&matches(q,view),top=[(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
  ctx.font='700 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';ctx.fillStyle=ok?'#099c98':'#799ca0';
@@ -275,6 +309,15 @@ function openModal(){updateAnalysis();$('modal').classList.add('show')};function
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
 window.__twinLab={getState:()=>({stage,step:45,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice()};
+// Optional target-only peek without opening another panel. Hold the existing legend.
+const gp=$('goalPeek');
+function setPeek(v){peekGoal=!!v;gp.classList.toggle('pressed',peekGoal);refresh();}
+gp.addEventListener('pointerdown',e=>{e.preventDefault();try{gp.setPointerCapture(e.pointerId)}catch(_){}setPeek(true)});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])gp.addEventListener(name,()=>setPeek(false));
+gp.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setPeek(true)}});
+gp.addEventListener('keyup',()=>setPeek(false));
+gp.addEventListener('blur',()=>setPeek(false));
+gp.addEventListener('contextmenu',e=>e.preventDefault());
 document.querySelectorAll('.methodbtn').forEach(b=>b.addEventListener('click',()=>setExperiment(b.dataset.method)));
 soundUI();setStage(stage);setExperiment('C');
 </script>

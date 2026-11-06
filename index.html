@@ -41,131 +41,133 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .bottom{margin-top:0;padding-top:6px}
 @media(max-height:735px){.heading{min-height:65px;padding-top:9px}.stage-area{min-height:200px}.legend{padding:3px 0}}
 @media(max-height:600px){.heading{min-height:54px;padding-top:5px}.stage-area{min-height:145px}}
+
+/* V3: one connected play surface, three genuinely object-local 45-degree axes. */
+.axisbar{display:flex;align-items:center;justify-content:center;gap:6px;flex:none;margin:1px auto 0;min-height:37px;width:100%}
+.axisbar .axislabel,.axisbar .axisnote{font-size:10px;color:#88a3a6;font-weight:700;white-space:nowrap}
+.axisbar .axisnote{font-weight:600;font-size:9px;margin-left:1px}
+.axisbar button{border:1px solid #deebea;background:rgba(255,255,255,.85);color:#668c91;min-width:34px;height:31px;padding:0 10px;border-radius:11px;box-shadow:0 2px 5px #164c5010;font-size:12px;font-weight:760;transition:background-color .1s,color .1s,border-color .1s}
+.axisbar button.active{background:#dff4f2;color:#087d85;border-color:#8ed9d5}
+.stage-guide{bottom:9px}.heading{min-height:77px}
+.legend{margin-top:0;padding:2px 0 4px}
+@media(max-height:740px){.heading{min-height:62px}.axisbar{min-height:32px}.axisbar button{height:28px}.axisbar .axisnote{display:none}.stage-guide{bottom:5px}}
+@media(max-width:355px){.axisbar .axisnote{display:none}.axisbar button{min-width:30px;padding:0 8px}}
 </style>
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="brand">TWIN SHADOW<small>SHADOW STUDIO · 45°</small></div><div class="topt">
+<header class="top"><div class="brand">TWIN SHADOW<small>LOCAL ROTATION · 45°</small></div><div class="topt">
 <button class="iconbtn" id="reset" title="この問題を最初から" aria-label="この問題を最初から"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7.3M4 4v6h6"/></svg></button>
 <button class="iconbtn" id="sound" title="音を切り替える" aria-label="音を切り替える"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg></button>
 <button class="iconbtn" id="menu" title="分析・設定" aria-label="分析・設定"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></header>
 
 <section class="heading"><div class="eyebrow" id="eyebrow">EXPERIMENT 01 / 06</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体を上下左右にドラッグして回転。矢印キーにも対応"></canvas><div class="orientation" id="orientation">Y 000° · X 000°</div><div class="stage-guide"> <span>← →</span> 横 <span>↑ ↓</span> 縦 · 45°ずつ回転</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体をドラッグして回転。下のボタンで3軸を選択。2本指のひねりでも回転可能"></canvas><div class="orientation" id="orientation">3 AXES · 45°</div><div class="stage-guide"> <span>↔</span> 回す <span>↕</span> 傾ける · 45°ずつ</div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
+<div class="axisbar" role="group" aria-label="立体の回転軸を選ぶ"><span class="axislabel">回転軸</span><button data-axis="auto" class="active" aria-pressed="true">自由</button><button data-axis="x" aria-pressed="false">X</button><button data-axis="y" aria-pressed="false">Y</button><button data-axis="z" aria-pressed="false">Z</button><span class="axisnote">立体自身の軸</span></div>
 <div class="legend"><span class="legendpart"><i class="swatch"></i>目標の影</span><span class="legendpart"><i class="swatch live"></i>動かしている影</span></div>
 <footer class="bottom"><div id="status" class="status">立体をスワイプして回してみよう</div><nav class="levels" id="levels" aria-label="実験ステージを選択"></nav></footer>
 </main>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="検証データ"><div class="sheet"><div class="sheethead"><h2>回転の実験室</h2><button id="close" class="close" aria-label="閉じる">×</button></div>
-<p>45°刻みで立体を回します。目の前の立体と左右のスクリーンに映る影は、ひとつの操作エリアで同時に変化します。薄い輪郭が目標、シアンの色が現在の影です。</p>
+<p>45°刻みで立体を回します。目の前の立体と左右のスクリーンに映る影は、ひとつの操作エリアで同時に変化します。薄い灰青の面が目標、シアンの面が現在の影です。自由モードでは横スワイプでY軸、縦スワイプでX軸。X・Y・Zボタンを選べば立体自身のその軸だけを回せます。2本指のひねりはZ軸回転です。</p>
 <div class="switchrow"><strong>回転音</strong><button id="soundToggle">ON</button></div>
 <div class="switchrow"><strong>自由に回す（目標を隠す）</strong><button id="freeToggle">OFF</button></div>
 <h3>この問題の数学</h3><div class="analysis" id="analysis">計算中…</div>
-<p>※この実験版では横（Y軸）・縦（X軸）の角度を独立に指定する固定2軸方式で45°刻み（8×8＝64角度ペア）です。異なる角度ペアでも同じ立体姿勢や影になる場合があります。判定は立体の正射影シルエットを画素比較します。</p>
+<p>※回転順で姿勢が変わる3軸回転方式。目標は45°の回転列から作成。正解判定は2方向の正射影の一致を比較します。</p>
 <button class="sheetbutton" id="return">ゲームに戻る</button></div></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id),rad=d=>d*Math.PI/180;
+const $=id=>document.getElementById(id),RAD=Math.PI/180;
+const ID=[1,0,0,0],STEP=45;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const norm=v=>{const h=Math.hypot(...v);return v.map(x=>x/h)};
+function qm(a,b){return [a[0]*b[0]-a[1]*b[1]-a[2]*b[2]-a[3]*b[3],a[0]*b[1]+a[1]*b[0]+a[2]*b[3]-a[3]*b[2],a[0]*b[2]-a[1]*b[3]+a[2]*b[0]+a[3]*b[1],a[0]*b[3]+a[1]*b[2]-a[2]*b[1]+a[3]*b[0]]}
+function qrot(axis,deg){const a=deg*RAD/2,w=Math.cos(a),s=Math.sin(a);return axis==='x'?[w,s,0,0]:axis==='y'?[w,0,s,0]:[w,0,0,s]}
+const qnormal=q=>norm(q);
+function qnext(q,axis,n){return qnormal(qm(q,qrot(axis,n*STEP)))} // POST multiplication: each rotation is around the object's OWN axis.
+function qslerp(a,b,t){let cs=dot(a,b),v=b;if(cs<0){cs=-cs;v=b.map(n=>-n)}if(cs>.9995)return qnormal(a.map((n,i)=>n+(v[i]-n)*t));const angle=Math.acos(clamp(cs,-1,1)),sn=Math.sin(angle);return a.map((n,i)=>(Math.sin((1-t)*angle)*n+Math.sin(t*angle)*v[i])/sn)}
+function mat(q){let [w,x,y,z]=q;return [[1-2*(y*y+z*z),2*(x*y-z*w),2*(x*z+y*w)],[2*(x*y+z*w),1-2*(x*x+z*z),2*(y*z-x*w)],[2*(x*z-y*w),2*(y*z+x*w),1-2*(x*x+y*y)]]}
+const mv=(m,v)=>m.map(row=>dot(row,v));
+function makeGoal(sequence){let q=ID;for(const [axis,turn] of sequence)q=qnext(q,axis,turn);return q;}
 const STAGES=[
- {title:'ひとつの影。',sub:'薄い影とシアンの影を重ねよう',blocks:[[0,0,0],[1,0,0],[2,0,0]],goal:[45,0],views:1},
- {title:'ふたつの影。',sub:'正面と横、両方の形を合わせよう',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],goal:[45,0],views:2},
- {title:'高さの秘密。',sub:'横だけではなく、縦にも回そう',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1]],goal:[90,45],views:2},
- {title:'橋の向こう側。',sub:'影にあいた隙間もヒントになる',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[2,2,0],[2,1,0],[2,0,0],[2,0,1]],goal:[135,45],views:2},
- {title:'折れ曲がる空間。',sub:'同じ立体が、全く違う形に見える',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],goal:[225,90],views:2},
- {title:'TWIN SHADOW。',sub:'ふたつの投影から空間を読み解こう',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2],[1,2,2]],goal:[315,135],views:2}
+ {title:'はじめの45°。',sub:'立体を右にひとカリ。',blocks:[[0,0,0],[1,0,0],[2,0,0]],path:[['y',1]],views:1},
+ {title:'ふたつの影。',sub:'ふたつのスクリーンを揃えよう。',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],path:[['y',1],['x',1]],views:2},
+ {title:'立体の軸。',sub:'傾けたあと、ひねってみよう。',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1]],path:[['x',1],['z',1]],views:2},
+ {title:'橋の向こう。',sub:'斜めからの影に注目。',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[2,2,0],[2,1,0],[2,0,0],[2,0,1]],path:[['y',1],['z',-1],['x',1]],views:2},
+ {title:'折れ曲がる空間。',sub:'順番を変えると影も変わる。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],path:[['x',-1],['y',1],['z',1],['y',1]],views:2},
+ {title:'TWIN SHADOW。',sub:'立体の3軸を使いこなそう。',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2],[1,2,2]],path:[['y',1],['z',1],['x',-1],['y',-1],['z',1]],views:2}
 ];
-// Normalize the voxel-center coordinates once, preserving the true orthographic silhouette.
-for(const s of STAGES){const low=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),high=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(low[i]+high[i])/2));}
-const RY=a=>[[Math.cos(a),0,Math.sin(a)],[0,1,0],[-Math.sin(a),0,Math.cos(a)]],RX=a=>[[1,0,0],[0,Math.cos(a),-Math.sin(a)],[0,Math.sin(a),Math.cos(a)]];
-const mm=(a,b)=>a.map(row=>b[0].map((_,j)=>row.reduce((t,n,k)=>t+n*b[k][j],0)));
-const mv=(m,v)=>m.map(row=>row[0]*v[0]+row[1]*v[1]+row[2]*v[2]);
-const matrix=(yaw,pitch)=>mm(RX(rad(pitch)),RY(rad(yaw)));
-const dot=(a,b)=>a.reduce((t,n,i)=>t+n*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit=v=>v.map(n=>n/Math.hypot(...v));
-const look=unit([5,7.1,9]),right=unit([look[2],0,-look[0]]),up=unit(cross(look,right));
-const hull=pts=>{const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]),cross2=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const lower=[],upper=[];for(const p of a){while(lower.length>1&&cross2(lower.at(-2),lower.at(-1),p)<=0)lower.pop();lower.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(upper.length>1&&cross2(upper.at(-2),upper.at(-1),p)<=0)upper.pop();upper.push(p)}lower.pop();upper.pop();return lower.concat(upper)};
-let stage=0,step=45,yaw=0,pitch=0,displayYaw=0,displayPitch=0,moves=0,drag=null,snapping=false,finished=false,free=false,animToken=0,pointerID=null,soundOn=true,audio=null,wonTimer=0;
-let best={};try{const data=JSON.parse(localStorage.getItem('twin_shadow_45_v2')||'{}');best=data.best||{};soundOn=data.sound!==false;step=45;stage=Math.min(5,Math.max(0,data.stage||0))}catch(_){ }
-const scene=$('scene'),ctx=scene.getContext('2d');
-const masksCache=new Map(),countCache=new Map();const SIZE=144,UNIT=SIZE/5.8;
-function sizeCanvas(el,c){const box=el.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.round(box.width*dpr),h=Math.round(box.height*dpr);if(el.width!==w||el.height!==h){el.width=w;el.height=h}c.setTransform(dpr,0,0,dpr,0,0);return {w:box.width,h:box.height};}
-function silhouette(c,shape,m,view,scale,cx,cy,fill){c.fillStyle=fill;for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale])}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();}}
-function maskFor(sindex,y,p,v){y=((y%360)+360)%360;p=((p%360)+360)%360;const id=`${sindex}|${y}|${p}|${v}`;if(masksCache.has(id))return masksCache.get(id);const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,SIZE,SIZE);silhouette(c,STAGES[sindex].shape,matrix(y,p),v,UNIT,SIZE/2,SIZE/2,'#ffffff');const rgba=c.getImageData(0,0,SIZE,SIZE).data, bits=new Uint8Array(SIZE*SIZE);for(let i=0;i<bits.length;i++)bits[i]=rgba[i*4+3]>=100?1:0;const entry={bits};masksCache.set(id,entry);return entry;}
+for(const s of STAGES){const lo=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),hi=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(lo[i]+hi[i])/2));s.goalQ=makeGoal(s.path);s.occ=new Set(s.blocks.map(p=>p.join(',')));}
+const camera=norm([5,7.1,9]),camRight=norm([camera[2],0,-camera[0]]),camUp=norm(cross(camera,camRight));
+function hull(pts){const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]);const cr=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const l=[],u=[];for(const p of a){while(l.length>1&&cr(l.at(-2),l.at(-1),p)<=0)l.pop();l.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(u.length>1&&cr(u.at(-2),u.at(-1),p)<=0)u.pop();u.push(p)}l.pop();u.pop();return l.concat(u)}
+function silhouette(c,shape,m,view,scale,cx,cy,fill){c.fillStyle=fill;for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();}}
+let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,axisChoice='auto',drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
+const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=190,UNIT=SIZE/6.4;
+let best={};try{const data=JSON.parse(localStorage.getItem('twin_shadow_v3')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
+function save(){try{localStorage.setItem('twin_shadow_v3',JSON.stringify({stage,sound:soundOn,best}))}catch(_){}}
+function canonical(q){const qq=q[0]<0?q.map(x=>-x):q;return qq.map(n=>Math.round(n*100000)/100000).join(',')}
+const maskCache=new Map();
+function maskFor(sindex,pose,view){const key=sindex+'|'+view+'|'+canonical(pose);if(maskCache.has(key))return maskCache.get(key);const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d',{willReadFrequently:true});silhouette(c,STAGES[sindex].shape,mat(pose),view,UNIT,SIZE/2,SIZE/2,'#fff');const rgba=c.getImageData(0,0,SIZE,SIZE).data,bits=new Uint8Array(SIZE*SIZE);for(let i=0;i<bits.length;i++)bits[i]=rgba[i*4+3]>110?1:0;maskCache.set(key,bits);if(maskCache.size>1300){const it=maskCache.keys();for(let i=0;i<300;i++)maskCache.delete(it.next().value)}return bits;}
 function iou(a,b){let common=0,un=0;for(let i=0;i<a.length;i++){if(a[i]|b[i])un++;if(a[i]&b[i])common++}return un?common/un:1;}
-function matchingPose(y,p){const goal=STAGES[stage],tol=.996;for(let i=0;i<goal.views;i++)if(iou(maskFor(stage,y,p,i).bits,maskFor(stage,...goal.goal,i).bits)<tol)return false;return true;}
-function colorMask(mask,fill,border){const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d'),data=c.createImageData(SIZE,SIZE),o=data.data;for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){const k=y*SIZE+x;if(!mask[k])continue;let edge=false;if(border)for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0],[0,2],[0,-2]])if(x+dx<0||x+dx>=SIZE||y+dy<0||y+dy>=SIZE||!mask[(y+dy)*SIZE+(x+dx)]){edge=true;break}const rgba=edge?border:fill;const i=k*4;for(let j=0;j<4;j++)o[i+j]=rgba[j]}c.putImageData(data,0,0);return cn;}
-const coloredCache=new Map();function paintTarget(id,bits){if(coloredCache.has(id))return coloredCache.get(id);const colored={bg:colorMask(bits,[227,237,239,255],[143,172,179,255]),edge:colorMask(bits,[0,0,0,0],[70,112,124,250])};coloredCache.set(id,colored);return colored}
-let pending=false;function refresh(){if(!pending){pending=true;requestAnimationFrame(redraw)}}
-const liveWall=document.createElement('canvas');liveWall.width=liveWall.height=SIZE;const liveWallCtx=liveWall.getContext('2d');
-function wall(ctx,view,project,scale,cy,model){
- const S=SIZE/UNIT/2, D=3.18, mapping=(u,v)=>view===0?project([u,v,-D]):project([-D,v,u]);
- const p0=mapping(-S,S),p1=mapping(S,S),p2=mapping(-S,-S),p3=mapping(S,-S),
-  a=(p1[0]-p0[0])/SIZE,b=(p1[1]-p0[1])/SIZE,c=(p2[0]-p0[0])/SIZE,d=(p2[1]-p0[1])/SIZE;
- // The two glass screens are part of the interaction scene, not independent thumbnails.
- ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();
- ctx.fillStyle='rgba(255,255,255,.72)';ctx.fill();ctx.strokeStyle='#cde5e4';ctx.lineWidth=1.25;ctx.stroke();
- ctx.save();ctx.transform(a,b,c,d,p0[0],p0[1]);
- const bits=maskFor(stage,...STAGES[stage].goal,view).bits;
- if(!free){const target=paintTarget(`${stage}|${view}`,bits);ctx.drawImage(target.bg,0,0);}
- liveWallCtx.clearRect(0,0,SIZE,SIZE);
- silhouette(liveWallCtx,STAGES[stage].shape,model,view,UNIT,SIZE/2,SIZE/2,'rgba(8,181,185,.63)');
- ctx.drawImage(liveWall,0,0);
- if(!free){ctx.drawImage(paintTarget(`${stage}|${view}`,bits).edge,0,0)}
+function matches(pose,view){return iou(maskFor(stage,pose,view),maskFor(stage,STAGES[stage].goalQ,view))>=.993;}
+function matchingPose(pose){for(let v=0;v<STAGES[stage].views;v++)if(!matches(pose,v))return false;return true;}
+function resizeCanvas(){const rect=scene.getBoundingClientRect(),ratio=Math.min(window.devicePixelRatio||1,3),W=Math.round(rect.width*ratio),H=Math.round(rect.height*ratio);if(scene.width!==W||scene.height!==H){scene.width=W;scene.height=H;}ctx.setTransform(ratio,0,0,ratio,0,0);return {w:rect.width,h:rect.height};}
+function wall(view,project,model,gmodel,s){const half=SIZE/UNIT/2,d=3.15,map=(u,v)=>view===0?project([u,v,-d]):project([-d,v,u]);const p0=map(-half,half),p1=map(half,half),p2=map(-half,-half),p3=map(half,-half);const a=(p1[0]-p0[0])/SIZE,b=(p1[1]-p0[1])/SIZE,c=(p2[0]-p0[0])/SIZE,d2=(p2[1]-p0[1])/SIZE;
+ ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle='rgba(255,255,255,.70)';ctx.fill();ctx.strokeStyle='rgba(129,191,191,.40)';ctx.lineWidth=.8;ctx.stroke();
+ ctx.save();ctx.transform(a,b,c,d2,p0[0],p0[1]);
+ if(!free){silhouette(ctx,s.shape,gmodel,view,UNIT,SIZE/2,SIZE/2,'rgba(192,214,216,.81)');}
+ silhouette(ctx,s.shape,model,view,UNIT,SIZE/2,SIZE/2,'rgba(5,175,177,.70)');
  ctx.restore();
- const matched=!free&&iou(maskFor(stage,((yaw%360)+360)%360,((pitch%360)+360)%360,view).bits,bits)>=.996;
- ctx.save();ctx.font='700 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=matched?'#089c98':'#6e969c';ctx.textAlign='center';
- const head=[(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
- ctx.fillText((view===0?'まえ':'よこ')+(matched?'   ✓':''),head[0],Math.max(15,head[1]-10));ctx.restore();
+ const ok=!free&&!animation&&!drag&&!twist&&matches(q,view),top=[(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
+ ctx.font='700 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';ctx.fillStyle=ok?'#099c98':'#799ca0';ctx.fillText((view===0?'まえ':'よこ')+(ok?'  ✓':''),top[0],Math.max(14,top[1]-9));ctx.restore();}
+function drawCompass(x,y,model){ctx.save();ctx.fillStyle='rgba(255,255,255,.78)';ctx.beginPath();ctx.arc(x,y,36,0,Math.PI*2);ctx.fill();const cols=['#7ba4b4','#45aab2','#c9a887'];for(let i=0;i<3;i++){const axis=[0,0,0];axis[i]=1;const p=mv(model,axis),dx=dot(p,camRight)*23,dy=-dot(p,camUp)*23;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y+dy);ctx.strokeStyle=cols[i];ctx.lineWidth=axisChoice==='xyz'[i]?2.8:2.2;ctx.lineCap='round';ctx.stroke();ctx.fillStyle=cols[i];ctx.font='700 10px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('XYZ'[i],x+dx*1.27,y+dy*1.27+3);}ctx.fillStyle='#56878e';ctx.beginPath();ctx.arc(x,y,2.3,0,Math.PI*2);ctx.fill();ctx.restore();}
+function draw(){const {w,h}=resizeCanvas();if(w<20||h<20)return;ctx.clearRect(0,0,w,h);const s=STAGES[stage],model=mat(displayQ),gmodel=mat(s.goalQ),size=Math.min(w/8.45,h/8.15),cx=w*.50,cy=h*.535;const project=p=>[cx+dot(p,camRight)*size,cy-dot(p,camUp)*size];
+ if(s.views===2)wall(1,project,model,gmodel,s);wall(0,project,model,gmodel,s);
+ ctx.save();ctx.translate(cx,cy+h*.26);ctx.scale(1,.30);const g=ctx.createRadialGradient(0,0,4,0,0,size*1.7);g.addColorStop(0,'rgba(32,132,136,.115)');g.addColorStop(1,'rgba(32,132,136,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,size*1.7,0,Math.PI*2);ctx.fill();ctx.restore();
+ const faces=[];for(let i=0;i<s.blocks.length;i++){const source=s.blocks[i],base=s.shape[i];for(let axis=0;axis<3;axis++)for(const dir of [-1,1]){const nb=source.slice();nb[axis]+=dir;if(s.occ.has(nb.join(',')))continue;const normal=[0,0,0];normal[axis]=dir;const n=mv(model,normal);if(dot(n,camera)<.005)continue;const other=[0,1,2].filter(j=>j!==axis),corners=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(pair=>{const v=base.slice();v[axis]+=dir*.5;v[other[0]]+=pair[0];v[other[1]]+=pair[1];return mv(model,v)}),light=.48+.40*Math.max(0,dot(n,norm([-.2,1.1,1.25])))+.07*Math.max(0,dot(n,camera));faces.push({pts:corners.map(project),depth:dot(corners.reduce((a,p)=>a.map((n,j)=>n+p[j]/4),[0,0,0]),camera),color:`rgb(${[Math.round(38+171*light),Math.round(146+106*light),Math.round(163+91*light)].map(x=>Math.min(254,x)).join(',')})`});}}
+ faces.sort((a,b)=>a.depth-b.depth);ctx.lineJoin='round';for(const f of faces){ctx.beginPath();f.pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=f.color;ctx.fill();ctx.strokeStyle='rgba(50,111,122,.20)';ctx.lineWidth=.85;ctx.stroke();ctx.beginPath();ctx.moveTo(...f.pts[0]);ctx.lineTo(...f.pts[1]);ctx.strokeStyle='rgba(255,255,255,.33)';ctx.lineWidth=.7;ctx.stroke();}
+ drawCompass(w-44,Math.max(48,h*.135),model);
+ $('orientation').textContent=axisChoice==='auto'?'3 AXES  ·  45°':'LOCAL '+axisChoice.toUpperCase()+'  ·  45°';
 }
-function drawScene(){const {w,h}=sizeCanvas(scene,ctx);if(w<10||h<10)return;ctx.clearRect(0,0,w,h);const s=STAGES[stage],m=matrix(displayYaw,displayPitch),size=Math.min(w/8.4,h/8.5),cx=w*.50,cy=h*.55;
- const project=p=>[cx+dot(p,right)*size,cy-dot(p,up)*size];
- if(s.views===2)wall(ctx,1,project,size,cy,m);
- wall(ctx,0,project,size,cy,m);
- // Soft floor shadow anchors the object without clutter.
- ctx.save();ctx.translate(cx,cy+h*.28);ctx.scale(1,.28);const g=ctx.createRadialGradient(0,0,3,0,0,size*1.6);g.addColorStop(0,'rgba(28,133,137,.13)');g.addColorStop(1,'rgba(28,133,137,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,size*1.6,0,Math.PI*2);ctx.fill();ctx.restore();
- const screen=project;const occ=new Set(s.blocks.map(v=>v.join(',')));const faces=[];
- for(let i=0;i<s.blocks.length;i++){
-   const source=s.blocks[i],base=s.shape[i];for(let axis=0;axis<3;axis++)for(const dir of [-1,1]){const neighbor=source.slice();neighbor[axis]+=dir;if(occ.has(neighbor.join(',')))continue;
-   const nor=[0,0,0];nor[axis]=dir;const normal=mv(m,nor);if(dot(normal,look)<.005)continue;
-   const other=[0,1,2].filter(j=>j!==axis),corners=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(pair=>{const v=base.slice();v[axis]+=dir*.5;v[other[0]]+=pair[0];v[other[1]]+=pair[1];return mv(m,v)});
-   const light=.46+.43*Math.max(0,dot(normal,unit([-.18,1.1,1.3])))+.07*Math.max(0,dot(normal,look)),rgb=[Math.round(47+168*light),Math.round(145+105*light),Math.round(160+96*light)];
-   faces.push({pts:corners.map(screen),depth:dot(corners.reduce((sum,p)=>sum.map((n,j)=>n+p[j]/4),[0,0,0]),look),fill:`rgb(${rgb.map(v=>Math.min(253,v)).join(',')})`});
-   }
- }
- faces.sort((a,b)=>a.depth-b.depth);ctx.lineJoin='round';for(const f of faces){ctx.beginPath();f.pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=f.fill;ctx.fill();ctx.lineWidth=1.05;ctx.strokeStyle='rgba(25,103,116,.25)';ctx.stroke();ctx.beginPath();ctx.moveTo(...f.pts[0]);ctx.lineTo(...f.pts[1]);ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=.9;ctx.stroke();}
- $('orientation').textContent=`Y ${String(((Math.round(displayYaw)%360)+360)%360).padStart(3,'0')}°  ·  X ${String(((Math.round(displayPitch)%360)+360)%360).padStart(3,'0')}°`;
-}
-function redraw(){pending=false;drawScene()}
-function syncCards(){refresh()}
-function persist(){try{localStorage.setItem('twin_shadow_45_v2',JSON.stringify({stage,step,sound:soundOn,best}))}catch(_){}}
-function updateModeButtons(){}
-function updateLevels(){const nav=$('levels');nav.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(Object.keys(best).some(k=>k.startsWith(i+'-'))?' done':'');b.setAttribute('aria-label',`実験${i+1} ${s.title}`);b.title=s.title;b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));nav.appendChild(b)})}
-function setStage(i){stage=i;stopMotion();yaw=pitch=displayYaw=displayPitch=0;moves=0;finished=false;clearTimeout(wonTimer);$('winoverlay').classList.remove('on');const s=STAGES[i];$('eyebrow').textContent=`EXPERIMENT ${String(i+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;$('status').textContent='立体をスワイプして回してみよう';updateLevels();syncCards();persist();refresh()}
-function setStep(newStep){return}
+function refresh(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})}
+function runAnim(to,duration=83,onEnd){const from=displayQ.slice(),token=++animID,start=performance.now();targetQ=to;animation={token};const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;if(reduced)duration=1;function tick(now){if(token!==animID)return;const t=clamp((now-start)/duration,0,1),e=1-Math.pow(1-t,3);displayQ=qslerp(from,to,e);refresh();if(t<1){requestAnimationFrame(tick);}else{displayQ=to.slice();animation=null;refresh();if(onEnd)onEnd();}}requestAnimationFrame(tick);}
+function cancelAnim(){++animID;animation=null;displayQ=targetQ.slice();refresh()}
 function setupAudio(){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume()}catch(_){}}
-function tone(hz,delay,dur,volume){if(!soundOn)return;setupAudio();if(!audio)return;try{const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.setValueAtTime(hz,t);o.frequency.exponentialRampToValueAtTime(hz*.83,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audio.destination);o.start(t);o.stop(t+dur+.012)}catch(_){}}
-function clickTone(){tone(690,0,.042,.021)}function successTone(){tone(523,0,.17,.027);tone(659,.10,.20,.029);tone(784,.20,.27,.028)}
-function stopMotion(){animToken++;snapping=false;drag=null;pointerID=null;$('stagearea').classList.remove('touching')}
-function settle(targetY,targetP,activeMoves,fromY=displayYaw,fromP=displayPitch){const token=++animToken;snapping=true;drag=null;$('stagearea').classList.remove('touching');const start=performance.now(),dur=window.matchMedia('(prefers-reduced-motion:reduce)').matches?1:Math.min(125,Math.max(55,(Math.abs(targetY-fromY)+Math.abs(targetP-fromP))*1.2+65));function frame(t){if(token!==animToken)return;const z=Math.min(1,(t-start)/dur),e=1-Math.pow(1-z,3);displayYaw=fromY+(targetY-fromY)*e;displayPitch=fromP+(targetP-fromP)*e;refresh();if(z<1){requestAnimationFrame(frame);return}yaw=targetY;pitch=targetP;displayYaw=yaw;displayPitch=pitch;snapping=false;moves+=activeMoves;syncCards();$('status').textContent=`${moves} クリック · ${step}°刻み`;refresh();if(!free)checkWin()}requestAnimationFrame(frame)}
-function checkWin(){if(finished||!matchingPose(((yaw%360)+360)%360,((pitch%360)+360)%360))return;finished=true;successTone();const k=`${stage}-${step}`;if(best[k]==null||moves<best[k])best[k]=moves;persist();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}クリックで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':'次の形へ →';$('winoverlay').classList.add('on');$('status').textContent=`CLEAR · ${moves}クリック · BEST ${best[k]}`;updateLevels()}
-function stepOnce(axis,sgn){if(snapping||drag||finished)return;setupAudio();clickTone();settle(yaw+(axis==='y'?sgn*step:0),pitch+(axis==='x'?sgn*step:0),1)}
-function dragStart(e){if(snapping||finished||drag||e.button!==0)return;pointerID=e.pointerId;try{scene.setPointerCapture(e.pointerId)}catch(_){ }setupAudio();drag={x:e.clientX,y:e.clientY,axis:null,startYaw:yaw,startPitch:pitch,units:0,lastDetent:0};$('stagearea').classList.add('touching')}
-function dragMove(e){if(!drag||pointerID!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.axis&&Math.max(Math.abs(dx),Math.abs(dy))>7)drag.axis=Math.abs(dx)>=Math.abs(dy)?'y':'x';if(!drag.axis)return;
- const dist=drag.axis==='y'?dx:dy,per=step===90?62:step===45?45:37,units=Math.max(-7,Math.min(7,dist/per)),detent=Math.round(units);if(detent!==drag.lastDetent){if(Math.abs(detent-drag.lastDetent)<5)clickTone();drag.lastDetent=detent}drag.units=units;displayYaw=drag.startYaw+(drag.axis==='y'?units*step:0);displayPitch=drag.startPitch+(drag.axis==='x'?units*step:0);refresh();}
-function dragEnd(e,canceled=false){if(!drag||pointerID!==e.pointerId)return;const d=drag;drag=null;pointerID=null;try{scene.releasePointerCapture(e.pointerId)}catch(_){ }const raw=d.units,steps=canceled?0:Math.round(raw);const y=d.startYaw+(d.axis==='y'?steps*step:0),p=d.startPitch+(d.axis==='x'?steps*step:0);if(steps!==0&&steps!==d.lastDetent)clickTone();settle(y,p,Math.abs(steps));}
-scene.addEventListener('pointerdown',dragStart);scene.addEventListener('pointermove',dragMove);scene.addEventListener('pointerup',e=>dragEnd(e));scene.addEventListener('pointercancel',e=>dragEnd(e,true));scene.addEventListener('keydown',e=>{const map={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowDown:['x',1],ArrowUp:['x',-1]};if(map[e.key]){e.preventDefault();stepOnce(...map[e.key])}});
-function nextStage(){setStage((stage+1)%STAGES.length)}$('next').addEventListener('click',nextStage);
-$('reset').addEventListener('click',()=>setStage(stage));
-function updateSound(){const a=$('soundToggle');a.textContent=soundOn?'ON':'OFF';a.classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#239da8':'#a0abad'}
-function flipSound(){soundOn=!soundOn;updateSound();persist();if(soundOn)clickTone()}$('sound').addEventListener('click',flipSound);$('soundToggle').addEventListener('click',flipSound);
-function toggleFree(){free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);$('status').textContent=free?'自由回転 · 影の変化を観察しよう':'目標に影をぴったり重ねよう';syncCards();refresh()}$('freeToggle').addEventListener('click',toggleFree);
-function collectStats(){const id=`${stage}|${step}|${STAGES[stage].views}`;if(countCache.has(id))return countCache.get(id);const angles=360/step;let count=0;const distinct=new Set();const goal=STAGES[stage];for(let y=0;y<angles;y++)for(let p=0;p<angles;p++){const yy=y*step,pp=p*step;if(matchingPose(yy,pp))count++;let sig='';for(let v=0;v<goal.views;v++){const bits=maskFor(stage,yy,pp,v).bits;let hash=2166136261;for(let k=0;k<bits.length;k++)if(bits[k])hash=Math.imul(hash^k,16777619);sig+=hash.toString(16)+';'}distinct.add(sig)}const result={total:angles*angles,wins:count,distinct:distinct.size,rate:100*count/(angles*angles)};countCache.set(id,result);return result;}
-function writeAnalysis(){const el=$('analysis');el.textContent='全姿勢を列挙して計算中…';setTimeout(()=>{const s=collectStats();const key=`${stage}-${step}`;el.innerHTML=`固定2軸で選べる姿勢 <b>${s.total}通り</b>（${360/step} × ${360/step}）<br>目標の影を満たす角度ペア <b>${s.wins}通り</b><br>姿勢を均等に選ぶと当たる確率 <b>${s.rate.toFixed(2)}%</b><br>異なる投影パターンの組 <b>${s.distinct}通り</b><br>この刻みでのベスト記録 <b>${best[key]??'未クリア'}${best[key]?'クリック':''}</b><br><small>※「均等に姿勢を選ぶ」確率で、ランダムなスワイプの平均手数ではありません。画素ごとの投影比較による数値です。</small>`},40)}
-function openModal(){writeAnalysis();$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show');refresh()}
-$('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});window.addEventListener('resize',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-// Lightweight deterministic inspection API for development tests only.
-window.__twinLab={getState:()=>({stage,step,yaw,pitch,moves,finished,free}),setStage,setStep,setPose:(y,p)=>{stopMotion();yaw=displayYaw=y;pitch=displayPitch=p;syncCards();refresh();checkWin()},stats:collectStats,goal:()=>STAGES[stage].goal.slice(),poseMatches:matchingPose};
-updateModeButtons();updateSound();setStage(stage);
+function tone(freq,dur,vol,delay=0){if(!soundOn)return;setupAudio();if(!audio)return;try{const t=audio.currentTime+delay,osc=audio.createOscillator(),amp=audio.createGain();osc.type='sine';osc.frequency.setValueAtTime(freq,t);amp.gain.setValueAtTime(.0001,t);amp.gain.linearRampToValueAtTime(vol,t+.007);amp.gain.exponentialRampToValueAtTime(.0001,t+dur);osc.connect(amp).connect(audio.destination);osc.start(t);osc.stop(t+dur+.015)}catch(_){}}
+let lastClick=0;function clickSound(){const now=performance.now();if(now-lastClick<34)return;lastClick=now;tone(460,.050,.014)}
+function successSound(){tone(659.255,.42,.030);tone(1318.51,.25,.0035,.015)} // A single pitch with octave overtone: no clashing chord.
+function status(msg){$('status').textContent=msg}
+function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title}`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
+function updateAxis(){document.querySelectorAll('[data-axis]').forEach(el=>{const chosen=el.dataset.axis===axisChoice;el.classList.toggle('active',chosen);el.setAttribute('aria-pressed',chosen?'true':'false')});$('orientation').textContent=axisChoice==='auto'?'3 AXES  ·  45°':'LOCAL '+axisChoice.toUpperCase()+'  ·  45°';refresh()}
+function setStage(i){stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];$('eyebrow').textContent=`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;status('立体を指で回してみよう');updateLevels();save();refresh()}
+function applyDetent(n,source){if(!source||n===source.detent)return;const diff=n-source.detent;source.detent=n;const target=qnext(source.baseQ,source.axis,n);runAnim(target,Math.min(105,68+Math.abs(diff)*7));clickSound();}
+function finishSource(source,wasCancel=false){if(!source)return;const snap=wasCancel?0:(source.detent||0);const to=qnext(source.baseQ,source.axis,snap);++animID;animation=null;displayQ=to.slice();targetQ=to.slice();q=to.slice();if(snap){moves+=Math.abs(snap);status(`${moves} カリッ · 45°ずつ`)}else status('立体を指で回してみよう');refresh();if(!free&&!wasCancel)checkWin();}
+function getLocal(e){const r=scene.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
+function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}pointers.set(e.pointerId,getLocal(e));if(pointers.size===1){cancelAnim();drag={id:e.pointerId,start:getLocal(e),baseQ:q.slice(),axis:null,detent:0,locked:axisChoice!=='auto',signHint:1};$('stagearea').classList.add('touching');}else if(pointers.size===2){if(drag){finishSource(drag);drag=null;}const pts=[...pointers.values()];const a=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);twist={baseAngle:a,baseQ:q.slice(),axis:axisChoice==='auto'?'z':axisChoice,detent:0};}}
+function move(e){if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,getLocal(e));if(twist&&pointers.size>=2){const [a,b]=[...pointers.values()],current=Math.atan2(b.y-a.y,b.x-a.x);let delta=(current-twist.baseAngle)*180/Math.PI;while(delta>180)delta-=360;while(delta< -180)delta+=360;const steps=clamp(Math.round(delta/STEP),-4,4);applyDetent(steps,twist);return;}
+ if(!drag||drag.id!==e.pointerId)return;const now=getLocal(e),dx=now.x-drag.start.x,dy=now.y-drag.start.y;if(!drag.axis&&Math.max(Math.abs(dx),Math.abs(dy))>=7){drag.axis=axisChoice==='auto'?(Math.abs(dx)>=Math.abs(dy)?'y':'x'):axisChoice;drag.metric=axisChoice==='auto'?(drag.axis==='y'?'horizontal':'vertical'):(Math.abs(dx)>=Math.abs(dy)?'horizontal':'vertical');}
+ if(!drag.axis)return;const distance=drag.metric==='horizontal'?dx:-dy;const detent=clamp(Math.round(distance/49),-4,4);drag.signHint=Math.sign(distance)||1;applyDetent(detent,drag);}
+function up(e,cancel=false){if(!pointers.has(e.pointerId))return;pointers.delete(e.pointerId);try{scene.releasePointerCapture(e.pointerId)}catch(_){}if(twist){finishSource(twist,cancel);twist=null;drag=null; if(pointers.size===0)$('stagearea').classList.remove('touching');return;}if(drag&&drag.id===e.pointerId){const end=getLocal(e),dis=Math.max(Math.abs(end.x-drag.start.x),Math.abs(end.y-drag.start.y));if(!cancel&&drag.axis&&drag.detent===0&&dis>20){applyDetent(drag.signHint,drag);}finishSource(drag,cancel);drag=null;}if(!pointers.size)$('stagearea').classList.remove('touching');}
+scene.addEventListener('pointerdown',down);scene.addEventListener('pointermove',move);scene.addEventListener('pointerup',e=>up(e));scene.addEventListener('pointercancel',e=>up(e,true));scene.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))up(e,true)});
+scene.addEventListener('keydown',e=>{const axis={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowUp:['x',1],ArrowDown:['x',-1],e:['z',1],q:['z',-1]};if(!axis[e.key]||finished)return;e.preventDefault();rotateOnce(...axis[e.key])});
+function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,92,()=>{status(`${moves} カリッ · 45°ずつ`);if(!free)checkWin()});}
+// Small axis-control chips make all three LOCAL axes directly available without requiring difficult multi-touch gestures.
+document.querySelectorAll('[data-axis]').forEach(el=>el.addEventListener('click',()=>{axisChoice=el.dataset.axis;updateAxis();clickSound()}));
+function checkWin(){if(finished||free||!matchingPose(q))return;finished=true;successSound();if(best[stage]==null||moves<best[stage])best[stage]=moves;save();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}カリッで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':'次の形へ →';$('winoverlay').classList.add('on');status(`CLEAR · ${moves}回 · BEST ${best[stage]}回`);updateLevels();}
+function soundUI(){$('soundToggle').textContent=soundOn?'ON':'OFF';$('soundToggle').classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#249ba7':'#9da9ac'}
+function toggleSound(){soundOn=!soundOn;save();soundUI();if(soundOn)clickSound();}$('sound').addEventListener('click',toggleSound);$('soundToggle').addEventListener('click',toggleSound);
+$('reset').addEventListener('click',()=>setStage(stage));$('next').addEventListener('click',()=>setStage((stage+1)%STAGES.length));
+$('freeToggle').addEventListener('click',()=>{free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);status(free?'自由回転 · 3軸を試そう':'2つの影をそろえよう');refresh()});
+function depth3(){let seen=new Set([canonical(ID)]),front=[ID],layers=[1];for(let i=1;i<=3;i++){const next=[];for(const q of front)for(const axis of ['x','y','z'])for(const turn of [-1,1]){const b=qnext(q,axis,turn),k=canonical(b);if(seen.has(k))continue;seen.add(k);next.push(b)}front=next;layers.push(next.length)}return layers}
+function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>立体自身の45°回転</b>を組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、X・Y・Z の3軸すべてを操作できます。<br>3軸を各±45°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>以前の「8×8＝64姿勢」は固定2軸に限る数え方でした。3軸の45°回転を任意の順序で重ねる場合、64姿勢には限定されません。ランダム正解率も安易には表示しません。</small>`}
+function openModal(){updateAnalysis();$('modal').classList.add('show')};function closeModal(){$('modal').classList.remove('show');refresh()}
+$('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+window.__twinLab={getState:()=>({stage,step:45,q:q.slice(),moves,finished,free,axisChoice}),setStage,setAxis:(a)=>{axisChoice=a;updateAxis()},rotateOnce,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice()};
+soundUI();updateAxis();setStage(stage);
 </script>
 </body>
 </html>

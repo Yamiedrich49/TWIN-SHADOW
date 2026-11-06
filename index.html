@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — SNAP TOUCH v8</title>
+<title>TWIN SHADOW — RELEASE CHECK v9</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -83,7 +83,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 
 <section class="heading"><div class="eyebrow" id="eyebrow">STAGE 01 / 12</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
 <div class="methodbar" role="group" aria-label="ヒントの比較"><button class="methodbtn" data-method="A" aria-pressed="false">A · 透ける</button><button class="methodbtn" data-method="B" aria-pressed="false">B · さわる</button><button class="methodbtn active" data-method="C" aria-pressed="true">C · 両方</button></div>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="指を一度スワイプすると90度回転。10問目から45度回転。途中でぬるぬる動かず、カチッと1回転する"></canvas><div class="stage-guide">1スワイプ＝1回転 · 長押しで影のヒント</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="指を一度スワイプすると90度回転。10問目から45度回転。途中でぬるぬる動かず、カチッと1回転する"></canvas><div class="stage-guide">1スワイプ＝1回転 · 指を離すと判定</div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
 
@@ -135,6 +135,9 @@ const camera=norm([5,7.1,9]),camRight=norm([camera[2],0,-camera[0]]),camUp=norm(
 function hull(pts){const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]);const cr=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const l=[],u=[];for(const p of a){while(l.length>1&&cr(l.at(-2),l.at(-1),p)<=0)l.pop();l.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(u.length>1&&cr(u.at(-2),u.at(-1),p)<=0)u.pop();u.push(p)}l.pop();u.pop();return l.concat(u)}
 function silhouette(c,shape,m,view,scale,cx,cy,fill,weld=false){c.fillStyle=fill;if(weld){c.strokeStyle=fill;c.lineJoin='round';c.lineWidth=1.2;}for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();if(weld)c.stroke();}}
 let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
+// A correct pose is never scored while a finger is still on the play surface.
+// Scoring waits until ALL pointers are released AND the final 46ms snap has ended.
+let awaitingReleaseCheck=false;
 const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=320,UNIT=SIZE/6.4;
 let best={};
 let experiment='C', hintBlock=-1, holdTimer=null, hitFaces=[], peekGoal=false;try{const data=JSON.parse(localStorage.getItem('twin_shadow_v7')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
@@ -220,7 +223,7 @@ function hitBlockAt(pt){for(let i=hitFaces.length-1;i>=0;i--)if(pointInPoly(pt,h
 function clearHint(){if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}if(hintBlock!==-1){hintBlock=-1;refresh();}}
 function setExperiment(which){if(!['A','B','C'].includes(which))return;clearHint();experiment=which;
  document.querySelectorAll('.methodbtn').forEach(b=>{const on=b.dataset.method===which;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
- $('stagearea').querySelector('.stage-guide').textContent=which==='A'?'1スワイプ＝1回転 · 影の濃さを観察':'1スワイプ＝1回転 · 長押しで影のヒント';
+ $('stagearea').querySelector('.stage-guide').textContent=which==='A'?'1スワイプ＝1回転 · 指を離すと判定':'1スワイプ＝1回転 · 指を離すと判定';
  status(which==='A'?'A · 透ける立体と濃淡の影':which==='B'?'B · 長押しで部分投影':'C · 両方のヒントを試そう');
  refresh();
 }
@@ -261,7 +264,7 @@ let lastClick=0;function clickSound(){const now=performance.now();if(now-lastCli
 function successSound(){tone(659.255,.42,.030);tone(1318.51,.25,.0035,.015)} // A single pitch with octave overtone: no clashing chord.
 function status(msg){$('status').textContent=msg}
 function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title} · ${s.step}°`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
-function setStage(i){clearHint();stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];STEP=s.step;
+function setStage(i){awaitingReleaseCheck=false;clearHint();stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];STEP=s.step;
  $('degreeBrand').textContent=STEP===90?'FIRST 90°':'UNLOCKED · 45°';
  $('eyebrow').textContent=stage===9?'NEW · 45° UNLOCKED':`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')} · ${STEP}°`;
  $('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;
@@ -273,17 +276,24 @@ const TOUCH_MIN=24, SNAP_MS=46;
 function localAxisForVector(dx,dy,pose,spin=false){const m=mat(pose);const omega=spin?camera: [camUp[0]*dx+camRight[0]*dy,camUp[1]*dx+camRight[1]*dy,camUp[2]*dx+camRight[2]*dy];let axis='x',sign=1,best=-1;
  for(let i=0;i<3;i++){const basis=[m[0][i],m[1][i],m[2][i]],score=dot(basis,omega);if(Math.abs(score)>best){best=Math.abs(score);axis='xyz'[i];sign=score<0?-1:1;}}
  return {axis,sign};}
+function tryCheckAfterRelease(){
+ // An animation can finish before a finger is lifted, or finish just after.
+ // Both routes converge here, but never permit a mid-gesture win overlay.
+ if(!awaitingReleaseCheck||pointers.size||drag||twist||animation||finished)return;
+ awaitingReleaseCheck=false;
+ if(!free)checkWin();
+}
 function snapTurn(axis,sign){
  if(finished)return;
- // The stored pose is always an exact 90°/45° detent.
+ // Record the exact destination immediately, but judge it only on finger-up.
  const dest=qnext(q,axis,sign);
- q=dest.slice();moves++;clickSound();status(`${moves} カチッ · ${STEP}°`);
- runAnim(dest,SNAP_MS,()=>{if(!free)checkWin()});
+ q=dest.slice();moves++;awaitingReleaseCheck=true;clickSound();status(`${moves} カチッ · ${STEP}°`);
+ runAnim(dest,SNAP_MS,tryCheckAfterRelease);
 }
 function finalizeDrag(){drag=null;}
 function getLocal(e){const r=scene.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
 function isSpinStart(pt){const rect=scene.getBoundingClientRect(),w=rect.width,h=rect.height,size=Math.min(w/8.45,h/8.15),cx=w*.50,cy=h*.535,rad=Math.hypot(pt.x-cx,pt.y-cy);return rad>size*1.6&&rad<size*3.25;}
-function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}const pt=getLocal(e);pointers.set(e.pointerId,pt);if(pointers.size===1){cancelAnim();drag={id:e.pointerId,anchor:pt,latest:pt,axis:null,sign:1,progress:0,spinPossible:isSpinStart(pt),spin:false,done:false,baseQ:q.slice(),hintCandidate:(experiment==='A'||free)?-1:hitBlockAt(pt),holding:false};
+function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}const pt=getLocal(e);pointers.set(e.pointerId,pt);if(pointers.size===1){awaitingReleaseCheck=false;cancelAnim();drag={id:e.pointerId,anchor:pt,latest:pt,axis:null,sign:1,progress:0,spinPossible:isSpinStart(pt),spin:false,done:false,baseQ:q.slice(),hintCandidate:(experiment==='A'||free)?-1:hitBlockAt(pt),holding:false};
  if(drag.hintCandidate>=0){const pid=e.pointerId;holdTimer=setTimeout(()=>{holdTimer=null;if(drag&&drag.id===pid&&!drag.axis&&pointers.size===1){drag.holding=true;hintBlock=drag.hintCandidate;status('このブロックが作る影を表示中');refresh();}},340);}
  $('stagearea').classList.add('touching');}
  else if(pointers.size===2){clearHint();if(drag){finalizeDrag();drag=null;}const pts=[...pointers.values()];twist={lastAngle:Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x),accum:0,baseQ:q.slice(),axis:localAxisForVector(0,0,q,true),done:false};}}
@@ -343,6 +353,9 @@ function up(e,cancel=false){
    finalizeDrag();
  }
  if(!pointers.size)$('stagearea').classList.remove('touching');
+ // Cancellation is NOT a release-based answer submission.
+ if(cancel)awaitingReleaseCheck=false;
+ else tryCheckAfterRelease();
  refresh();
 }
 scene.addEventListener('pointerdown',down);scene.addEventListener('pointermove',move);scene.addEventListener('pointerup',e=>up(e));scene.addEventListener('pointercancel',e=>up(e,true));scene.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))up(e,true)});
@@ -358,7 +371,7 @@ function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').inn
 function openModal(){updateAnalysis();$('modal').classList.add('show')};function closeModal(){$('modal').classList.remove('show');refresh()}
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-window.__twinLab={getState:()=>({stage,step:STEP,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null,gestureDone:!!drag?.done,control:'one-swipe-one-step'}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice(),stages:()=>STAGES.map(s=>({title:s.title,step:s.step,views:s.views,path:s.path}))};
+window.__twinLab={getState:()=>({stage,step:STEP,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null,gestureDone:!!drag?.done,pointersDown:pointers.size,awaitingReleaseCheck,control:'one-swipe-one-step-release-check'}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice(),stages:()=>STAGES.map(s=>({title:s.title,step:s.step,views:s.views,path:s.path}))};
 // Optional target-only peek without opening another panel. Hold the existing legend.
 const gp=$('goalPeek');
 function setPeek(v){peekGoal=!!v;gp.classList.toggle('pressed',peekGoal);refresh();}

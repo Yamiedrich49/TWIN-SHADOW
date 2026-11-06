@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — SHADOW STUDIO</title>
+<title>TWIN SHADOW — DIRECT TOUCH v4</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -52,29 +52,36 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .legend{margin-top:0;padding:2px 0 4px}
 @media(max-height:740px){.heading{min-height:62px}.axisbar{min-height:32px}.axisbar button{height:28px}.axisbar .axisnote{display:none}.stage-guide{bottom:5px}}
 @media(max-width:355px){.axisbar .axisnote{display:none}.axisbar button{min-width:30px;padding:0 8px}}
+/* V4: the sculpture itself is the orientation reference; no extra XYZ diagram or axis buttons. */
+.axisbar,.orientation{display:none!important}
+.stage-guide{font-size:11px;letter-spacing:.025em;color:#7d9b9c;bottom:5px}
+.heading{min-height:69px}
+.stage-area{min-height:225px}
+.legend{gap:18px}
+@media(max-height:720px){.heading{min-height:55px}.stage-area{min-height:185px}}
 </style>
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="brand">TWIN SHADOW<small>LOCAL ROTATION · 45°</small></div><div class="topt">
+<header class="top"><div class="brand">TWIN SHADOW<small>DIRECT TOUCH · 45°</small></div><div class="topt">
 <button class="iconbtn" id="reset" title="この問題を最初から" aria-label="この問題を最初から"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7.3M4 4v6h6"/></svg></button>
 <button class="iconbtn" id="sound" title="音を切り替える" aria-label="音を切り替える"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg></button>
 <button class="iconbtn" id="menu" title="分析・設定" aria-label="分析・設定"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></header>
 
 <section class="heading"><div class="eyebrow" id="eyebrow">EXPERIMENT 01 / 06</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体をドラッグして回転。下のボタンで3軸を選択。2本指のひねりでも回転可能"></canvas><div class="orientation" id="orientation">3 AXES · 45°</div><div class="stage-guide"> <span>↔</span> 回す <span>↕</span> 傾ける · 45°ずつ</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体をドラッグして45度ずつ回転。指を曲げても回転方向が変わる。周囲で円を描くとひねり回転"></canvas><div class="stage-guide">立体をなぞって回す · 外側で円を描くとひねる</div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
-<div class="axisbar" role="group" aria-label="立体の回転軸を選ぶ"><span class="axislabel">回転軸</span><button data-axis="auto" class="active" aria-pressed="true">自由</button><button data-axis="x" aria-pressed="false">X</button><button data-axis="y" aria-pressed="false">Y</button><button data-axis="z" aria-pressed="false">Z</button><span class="axisnote">立体自身の軸</span></div>
+
 <div class="legend"><span class="legendpart"><i class="swatch"></i>目標の影</span><span class="legendpart"><i class="swatch live"></i>動かしている影</span></div>
 <footer class="bottom"><div id="status" class="status">立体をスワイプして回してみよう</div><nav class="levels" id="levels" aria-label="実験ステージを選択"></nav></footer>
 </main>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="検証データ"><div class="sheet"><div class="sheethead"><h2>回転の実験室</h2><button id="close" class="close" aria-label="閉じる">×</button></div>
-<p>45°刻みで立体を回します。目の前の立体と左右のスクリーンに映る影は、ひとつの操作エリアで同時に変化します。薄い灰青の面が目標、シアンの面が現在の影です。自由モードでは横スワイプでY軸、縦スワイプでX軸。X・Y・Zボタンを選べば立体自身のその軸だけを回せます。2本指のひねりはZ軸回転です。</p>
+<p>立体を指でつかむようになぞると、指の向きに合った立体自身の軸で45°ずつ回転します。指を途中で曲げても、その先の回転に反映します。立体の周囲で円を描くか、2本指でひねると、手前・奥行き方向にも回せます。影の色は重なっても濃くならない一様なシルエットです。</p>
 <div class="switchrow"><strong>回転音</strong><button id="soundToggle">ON</button></div>
 <div class="switchrow"><strong>自由に回す（目標を隠す）</strong><button id="freeToggle">OFF</button></div>
 <h3>この問題の数学</h3><div class="analysis" id="analysis">計算中…</div>
-<p>※回転順で姿勢が変わる3軸回転方式。目標は45°の回転列から作成。正解判定は2方向の正射影の一致を比較します。</p>
+<p>※立体自身の3軸を45°単位で回転します。目標も45°回転列から作成。正解判定は2方向の正射影の一致を比較します。</p>
 <button class="sheetbutton" id="return">ゲームに戻る</button></div></div>
 <script>
 'use strict';
@@ -103,9 +110,9 @@ const STAGES=[
 for(const s of STAGES){const lo=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),hi=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(lo[i]+hi[i])/2));s.goalQ=makeGoal(s.path);s.occ=new Set(s.blocks.map(p=>p.join(',')));}
 const camera=norm([5,7.1,9]),camRight=norm([camera[2],0,-camera[0]]),camUp=norm(cross(camera,camRight));
 function hull(pts){const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]);const cr=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const l=[],u=[];for(const p of a){while(l.length>1&&cr(l.at(-2),l.at(-1),p)<=0)l.pop();l.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(u.length>1&&cr(u.at(-2),u.at(-1),p)<=0)u.pop();u.push(p)}l.pop();u.pop();return l.concat(u)}
-function silhouette(c,shape,m,view,scale,cx,cy,fill){c.fillStyle=fill;for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();}}
-let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,axisChoice='auto',drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
-const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=190,UNIT=SIZE/6.4;
+function silhouette(c,shape,m,view,scale,cx,cy,fill,weld=false){c.fillStyle=fill;if(weld){c.strokeStyle=fill;c.lineJoin='round';c.lineWidth=1.2;}for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();if(weld)c.stroke();}}
+let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
+const pointers=new Map(),scene=$('scene'),ctx=scene.getContext('2d',{alpha:true}),SIZE=320,UNIT=SIZE/6.4;
 let best={};try{const data=JSON.parse(localStorage.getItem('twin_shadow_v3')||'{}');best=data.best||{};soundOn=data.sound!==false;stage=clamp(data.stage||0,0,STAGES.length-1)}catch(_){ }
 function save(){try{localStorage.setItem('twin_shadow_v3',JSON.stringify({stage,sound:soundOn,best}))}catch(_){}}
 function canonical(q){const qq=q[0]<0?q.map(x=>-x):q;return qq.map(n=>Math.round(n*100000)/100000).join(',')}
@@ -115,22 +122,24 @@ function iou(a,b){let common=0,un=0;for(let i=0;i<a.length;i++){if(a[i]|b[i])un+
 function matches(pose,view){return iou(maskFor(stage,pose,view),maskFor(stage,STAGES[stage].goalQ,view))>=.993;}
 function matchingPose(pose){for(let v=0;v<STAGES[stage].views;v++)if(!matches(pose,v))return false;return true;}
 function resizeCanvas(){const rect=scene.getBoundingClientRect(),ratio=Math.min(window.devicePixelRatio||1,3),W=Math.round(rect.width*ratio),H=Math.round(rect.height*ratio);if(scene.width!==W||scene.height!==H){scene.width=W;scene.height=H;}ctx.setTransform(ratio,0,0,ratio,0,0);return {w:rect.width,h:rect.height};}
+// Opaque per-view offscreen masks. Overlapping solid geometry is a UNION, never a stack of translucent layers.
+const shadowScratch=[document.createElement('canvas'),document.createElement('canvas')];
+for(const c of shadowScratch){c.width=SIZE;c.height=SIZE;}
+function flatShadow(shape,m,view,scratch,color){const c=scratch.getContext('2d');c.clearRect(0,0,SIZE,SIZE);silhouette(c,shape,m,view,UNIT,SIZE/2,SIZE/2,color,true);return scratch;}
 function wall(view,project,model,gmodel,s){const half=SIZE/UNIT/2,d=3.15,map=(u,v)=>view===0?project([u,v,-d]):project([-d,v,u]);const p0=map(-half,half),p1=map(half,half),p2=map(-half,-half),p3=map(half,-half);const a=(p1[0]-p0[0])/SIZE,b=(p1[1]-p0[1])/SIZE,c=(p2[0]-p0[0])/SIZE,d2=(p2[1]-p0[1])/SIZE;
- ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle='rgba(255,255,255,.70)';ctx.fill();ctx.strokeStyle='rgba(129,191,191,.40)';ctx.lineWidth=.8;ctx.stroke();
+ ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle='rgba(255,255,255,.79)';ctx.fill();ctx.strokeStyle='rgba(126,190,190,.38)';ctx.lineWidth=.75;ctx.stroke();
  ctx.save();ctx.transform(a,b,c,d2,p0[0],p0[1]);
- if(!free){silhouette(ctx,s.shape,gmodel,view,UNIT,SIZE/2,SIZE/2,'rgba(192,214,216,.81)');}
- silhouette(ctx,s.shape,model,view,UNIT,SIZE/2,SIZE/2,'rgba(5,175,177,.70)');
+ if(!free){ctx.drawImage(flatShadow(s.shape,gmodel,view,shadowScratch[0],'#d8e7e8'),0,0);}
+ ctx.drawImage(flatShadow(s.shape,model,view,shadowScratch[1],'#23b6bd'),0,0);
  ctx.restore();
  const ok=!free&&!animation&&!drag&&!twist&&matches(q,view),top=[(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
  ctx.font='700 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.textAlign='center';ctx.fillStyle=ok?'#099c98':'#799ca0';ctx.fillText((view===0?'まえ':'よこ')+(ok?'  ✓':''),top[0],Math.max(14,top[1]-9));ctx.restore();}
-function drawCompass(x,y,model){ctx.save();ctx.fillStyle='rgba(255,255,255,.78)';ctx.beginPath();ctx.arc(x,y,36,0,Math.PI*2);ctx.fill();const cols=['#7ba4b4','#45aab2','#c9a887'];for(let i=0;i<3;i++){const axis=[0,0,0];axis[i]=1;const p=mv(model,axis),dx=dot(p,camRight)*23,dy=-dot(p,camUp)*23;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y+dy);ctx.strokeStyle=cols[i];ctx.lineWidth=axisChoice==='xyz'[i]?2.8:2.2;ctx.lineCap='round';ctx.stroke();ctx.fillStyle=cols[i];ctx.font='700 10px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('XYZ'[i],x+dx*1.27,y+dy*1.27+3);}ctx.fillStyle='#56878e';ctx.beginPath();ctx.arc(x,y,2.3,0,Math.PI*2);ctx.fill();ctx.restore();}
 function draw(){const {w,h}=resizeCanvas();if(w<20||h<20)return;ctx.clearRect(0,0,w,h);const s=STAGES[stage],model=mat(displayQ),gmodel=mat(s.goalQ),size=Math.min(w/8.45,h/8.15),cx=w*.50,cy=h*.535;const project=p=>[cx+dot(p,camRight)*size,cy-dot(p,camUp)*size];
  if(s.views===2)wall(1,project,model,gmodel,s);wall(0,project,model,gmodel,s);
  ctx.save();ctx.translate(cx,cy+h*.26);ctx.scale(1,.30);const g=ctx.createRadialGradient(0,0,4,0,0,size*1.7);g.addColorStop(0,'rgba(32,132,136,.115)');g.addColorStop(1,'rgba(32,132,136,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,size*1.7,0,Math.PI*2);ctx.fill();ctx.restore();
  const faces=[];for(let i=0;i<s.blocks.length;i++){const source=s.blocks[i],base=s.shape[i];for(let axis=0;axis<3;axis++)for(const dir of [-1,1]){const nb=source.slice();nb[axis]+=dir;if(s.occ.has(nb.join(',')))continue;const normal=[0,0,0];normal[axis]=dir;const n=mv(model,normal);if(dot(n,camera)<.005)continue;const other=[0,1,2].filter(j=>j!==axis),corners=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]].map(pair=>{const v=base.slice();v[axis]+=dir*.5;v[other[0]]+=pair[0];v[other[1]]+=pair[1];return mv(model,v)}),light=.48+.40*Math.max(0,dot(n,norm([-.2,1.1,1.25])))+.07*Math.max(0,dot(n,camera));faces.push({pts:corners.map(project),depth:dot(corners.reduce((a,p)=>a.map((n,j)=>n+p[j]/4),[0,0,0]),camera),color:`rgb(${[Math.round(38+171*light),Math.round(146+106*light),Math.round(163+91*light)].map(x=>Math.min(254,x)).join(',')})`});}}
  faces.sort((a,b)=>a.depth-b.depth);ctx.lineJoin='round';for(const f of faces){ctx.beginPath();f.pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=f.color;ctx.fill();ctx.strokeStyle='rgba(50,111,122,.20)';ctx.lineWidth=.85;ctx.stroke();ctx.beginPath();ctx.moveTo(...f.pts[0]);ctx.lineTo(...f.pts[1]);ctx.strokeStyle='rgba(255,255,255,.33)';ctx.lineWidth=.7;ctx.stroke();}
- drawCompass(w-44,Math.max(48,h*.135),model);
- $('orientation').textContent=axisChoice==='auto'?'3 AXES  ·  45°':'LOCAL '+axisChoice.toUpperCase()+'  ·  45°';
+
 }
 function refresh(){if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})}
 function runAnim(to,duration=83,onEnd){const from=displayQ.slice(),token=++animID,start=performance.now();targetQ=to;animation={token};const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;if(reduced)duration=1;function tick(now){if(token!==animID)return;const t=clamp((now-start)/duration,0,1),e=1-Math.pow(1-t,3);displayQ=qslerp(from,to,e);refresh();if(t<1){requestAnimationFrame(tick);}else{displayQ=to.slice();animation=null;refresh();if(onEnd)onEnd();}}requestAnimationFrame(tick);}
@@ -141,33 +150,64 @@ let lastClick=0;function clickSound(){const now=performance.now();if(now-lastCli
 function successSound(){tone(659.255,.42,.030);tone(1318.51,.25,.0035,.015)} // A single pitch with octave overtone: no clashing chord.
 function status(msg){$('status').textContent=msg}
 function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title}`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
-function updateAxis(){document.querySelectorAll('[data-axis]').forEach(el=>{const chosen=el.dataset.axis===axisChoice;el.classList.toggle('active',chosen);el.setAttribute('aria-pressed',chosen?'true':'false')});$('orientation').textContent=axisChoice==='auto'?'3 AXES  ·  45°':'LOCAL '+axisChoice.toUpperCase()+'  ·  45°';refresh()}
 function setStage(i){stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];$('eyebrow').textContent=`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;status('立体を指で回してみよう');updateLevels();save();refresh()}
-function applyDetent(n,source){if(!source||n===source.detent)return;const diff=n-source.detent;source.detent=n;const target=qnext(source.baseQ,source.axis,n);runAnim(target,Math.min(105,68+Math.abs(diff)*7));clickSound();}
-function finishSource(source,wasCancel=false){if(!source)return;const snap=wasCancel?0:(source.detent||0);const to=qnext(source.baseQ,source.axis,snap);++animID;animation=null;displayQ=to.slice();targetQ=to.slice();q=to.slice();if(snap){moves+=Math.abs(snap);status(`${moves} カリッ · 45°ずつ`)}else status('立体を指で回してみよう');refresh();if(!free&&!wasCancel)checkWin();}
+// Each pointer segment is mapped into one of the three CURRENT object-local axes.
+// No axis selector and no global X/Y lock. After every detent, classification starts afresh.
+const DETENT_PX=36, TOUCH_MIN=3;
+function localAxisForVector(dx,dy,pose,spin=false){const m=mat(pose);const omega=spin?camera: [camUp[0]*dx+camRight[0]*dy,camUp[1]*dx+camRight[1]*dy,camUp[2]*dx+camRight[2]*dy];let axis='x',sign=1,best=-1;
+ for(let i=0;i<3;i++){const basis=[m[0][i],m[1][i],m[2][i]],score=dot(basis,omega);if(Math.abs(score)>best){best=Math.abs(score);axis='xyz'[i];sign=score<0?-1:1;}}
+ return {axis,sign};}
+function rotateDirect(axis,n){if(!n||finished)return;q=qnext(q,axis,n);moves+=Math.abs(n);clickSound();status(`${moves} カリッ · 45°ずつ`);refresh();if(!free)checkWin();}
+function finalizeDrag(cancel=false){if(!drag)return;const d=drag;drag=null;
+ if(cancel){displayQ=q.slice();refresh();return;}
+ const n=d.axis?Math.round(d.progress/DETENT_PX):0;
+ if(n&&!finished){rotateDirect(d.axis,n*d.sign);} // swipe that passed half a detent snaps to 45°
+ runAnim(q.slice(),94,()=>{if(!free)checkWin()});
+}
 function getLocal(e){const r=scene.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
-function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}pointers.set(e.pointerId,getLocal(e));if(pointers.size===1){cancelAnim();drag={id:e.pointerId,start:getLocal(e),baseQ:q.slice(),axis:null,detent:0,locked:axisChoice!=='auto',signHint:1};$('stagearea').classList.add('touching');}else if(pointers.size===2){if(drag){finishSource(drag);drag=null;}const pts=[...pointers.values()];const a=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);twist={baseAngle:a,baseQ:q.slice(),axis:axisChoice==='auto'?'z':axisChoice,detent:0};}}
-function move(e){if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,getLocal(e));if(twist&&pointers.size>=2){const [a,b]=[...pointers.values()],current=Math.atan2(b.y-a.y,b.x-a.x);let delta=(current-twist.baseAngle)*180/Math.PI;while(delta>180)delta-=360;while(delta< -180)delta+=360;const steps=clamp(Math.round(delta/STEP),-4,4);applyDetent(steps,twist);return;}
- if(!drag||drag.id!==e.pointerId)return;const now=getLocal(e),dx=now.x-drag.start.x,dy=now.y-drag.start.y;if(!drag.axis&&Math.max(Math.abs(dx),Math.abs(dy))>=7){drag.axis=axisChoice==='auto'?(Math.abs(dx)>=Math.abs(dy)?'y':'x'):axisChoice;drag.metric=axisChoice==='auto'?(drag.axis==='y'?'horizontal':'vertical'):(Math.abs(dx)>=Math.abs(dy)?'horizontal':'vertical');}
- if(!drag.axis)return;const distance=drag.metric==='horizontal'?dx:-dy;const detent=clamp(Math.round(distance/49),-4,4);drag.signHint=Math.sign(distance)||1;applyDetent(detent,drag);}
-function up(e,cancel=false){if(!pointers.has(e.pointerId))return;pointers.delete(e.pointerId);try{scene.releasePointerCapture(e.pointerId)}catch(_){}if(twist){finishSource(twist,cancel);twist=null;drag=null; if(pointers.size===0)$('stagearea').classList.remove('touching');return;}if(drag&&drag.id===e.pointerId){const end=getLocal(e),dis=Math.max(Math.abs(end.x-drag.start.x),Math.abs(end.y-drag.start.y));if(!cancel&&drag.axis&&drag.detent===0&&dis>20){applyDetent(drag.signHint,drag);}finishSource(drag,cancel);drag=null;}if(!pointers.size)$('stagearea').classList.remove('touching');}
+function isSpinStart(pt){const rect=scene.getBoundingClientRect(),w=rect.width,h=rect.height,size=Math.min(w/8.45,h/8.15),cx=w*.50,cy=h*.535,rad=Math.hypot(pt.x-cx,pt.y-cy);return rad>size*1.6&&rad<size*3.25;}
+function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}const pt=getLocal(e);pointers.set(e.pointerId,pt);if(pointers.size===1){cancelAnim();drag={id:e.pointerId,anchor:pt,latest:pt,axis:null,sign:1,progress:0,spinPossible:isSpinStart(pt),spin:false,baseQ:q.slice()};$('stagearea').classList.add('touching');}
+ else if(pointers.size===2){if(drag){finalizeDrag();drag=null;}const pts=[...pointers.values()];twist={lastAngle:Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x),accum:0,baseQ:q.slice(),axis:localAxisForVector(0,0,q,true),detent:0};}}
+function processDrag(pt){if(!drag)return;const d=drag;let dx=pt.x-d.anchor.x,dy=pt.y-d.anchor.y;
+ const size=Math.min(scene.clientWidth/8.45,scene.clientHeight/8.15),cx=scene.clientWidth*.5,cy=scene.clientHeight*.535;
+ if(!d.axis){if(Math.hypot(dx,dy)<TOUCH_MIN){d.latest=pt;return;}
+   // A tangential gesture around the object selects the local axis closest to the viewing direction.
+   const rx=d.anchor.x-cx,ry=d.anchor.y-cy,rr=Math.hypot(rx,ry)||1,tan=(-ry*dx+rx*dy)/rr,rad=(rx*dx+ry*dy)/rr;
+   d.spin=!!(d.spinPossible&&Math.abs(tan)>Math.abs(rad)*1.35&&Math.abs(tan)>3);
+   const hit=localAxisForVector(dx,dy,d.baseQ,d.spin);d.axis=hit.axis;d.sign=d.spin?(tan>=0?hit.sign:-hit.sign):hit.sign;
+   d.startUnit=d.spin?[-ry/rr,rx/rr]:[dx/Math.hypot(dx,dy),dy/Math.hypot(dx,dy)];
+ }
+ // Projection onto the chosen detent's touch direction, not a globally locked horizontal/vertical component.
+ let movement=dx*d.startUnit[0]+dy*d.startUnit[1];
+ // For counter-motion, undo fractional rotation instead of freezing input.
+ d.progress=movement;
+ const steps=Math.trunc(Math.abs(movement)/DETENT_PX);
+ if(steps>=1){const count=Math.min(12,steps),direction=Math.sign(movement);for(let k=0;k<count;k++){q=qnext(q,d.axis,d.sign*direction);moves++;clickSound();}status(`${moves} カリッ · 45°ずつ`);d.anchor={x:d.anchor.x+d.startUnit[0]*DETENT_PX*count*direction,y:d.anchor.y+d.startUnit[1]*DETENT_PX*count*direction};d.axis=null;d.progress=0;d.baseQ=q.slice(); // next movement may choose a DIFFERENT local axis
+   if(!free)checkWin();}
+ if(d.axis)displayQ=qnext(q,d.axis,d.sign*d.progress/DETENT_PX);else displayQ=q.slice();
+ refresh();d.latest=pt;
+}
+function move(e){if(!pointers.has(e.pointerId))return;const pt=getLocal(e);pointers.set(e.pointerId,pt);
+ if(twist&&pointers.size>=2){const pts=[...pointers.values()],angle=Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x);let delta=angle-twist.lastAngle;while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;twist.accum+=delta;twist.lastAngle=angle;const units=twist.accum/(Math.PI/4),n=Math.trunc(Math.abs(units));if(n){const turn=n*Math.sign(units)*twist.axis.sign;q=qnext(q,twist.axis.axis,turn);moves+=n;twist.accum-=n*Math.sign(units)*Math.PI/4;for(let i=0;i<n;i++)clickSound();twist.axis=localAxisForVector(0,0,q,true);twist.baseQ=q.slice();if(!free)checkWin();}displayQ=qnext(q,twist.axis.axis,twist.axis.sign*twist.accum/(Math.PI/4));refresh();return;}
+ if(drag&&drag.id===e.pointerId)processDrag(pt);
+}
+function up(e,cancel=false){if(!pointers.has(e.pointerId))return;pointers.delete(e.pointerId);try{scene.releasePointerCapture(e.pointerId)}catch(_){}if(twist){if(!cancel&&Math.abs(twist.accum)>.25*(Math.PI/4)&&!finished){q=qnext(q,twist.axis.axis,twist.axis.sign*Math.sign(twist.accum));moves++;clickSound();}twist=null;drag=null;runAnim(q.slice(),90,()=>{if(!free)checkWin()});if(!pointers.size)$('stagearea').classList.remove('touching');return;}
+ if(drag&&drag.id===e.pointerId){finalizeDrag(cancel);}if(!pointers.size)$('stagearea').classList.remove('touching');}
 scene.addEventListener('pointerdown',down);scene.addEventListener('pointermove',move);scene.addEventListener('pointerup',e=>up(e));scene.addEventListener('pointercancel',e=>up(e,true));scene.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))up(e,true)});
 scene.addEventListener('keydown',e=>{const axis={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowUp:['x',1],ArrowDown:['x',-1],e:['z',1],q:['z',-1]};if(!axis[e.key]||finished)return;e.preventDefault();rotateOnce(...axis[e.key])});
 function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,92,()=>{status(`${moves} カリッ · 45°ずつ`);if(!free)checkWin()});}
-// Small axis-control chips make all three LOCAL axes directly available without requiring difficult multi-touch gestures.
-document.querySelectorAll('[data-axis]').forEach(el=>el.addEventListener('click',()=>{axisChoice=el.dataset.axis;updateAxis();clickSound()}));
 function checkWin(){if(finished||free||!matchingPose(q))return;finished=true;successSound();if(best[stage]==null||moves<best[stage])best[stage]=moves;save();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}カリッで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':'次の形へ →';$('winoverlay').classList.add('on');status(`CLEAR · ${moves}回 · BEST ${best[stage]}回`);updateLevels();}
 function soundUI(){$('soundToggle').textContent=soundOn?'ON':'OFF';$('soundToggle').classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#249ba7':'#9da9ac'}
 function toggleSound(){soundOn=!soundOn;save();soundUI();if(soundOn)clickSound();}$('sound').addEventListener('click',toggleSound);$('soundToggle').addEventListener('click',toggleSound);
 $('reset').addEventListener('click',()=>setStage(stage));$('next').addEventListener('click',()=>setStage((stage+1)%STAGES.length));
 $('freeToggle').addEventListener('click',()=>{free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);status(free?'自由回転 · 3軸を試そう':'2つの影をそろえよう');refresh()});
 function depth3(){let seen=new Set([canonical(ID)]),front=[ID],layers=[1];for(let i=1;i<=3;i++){const next=[];for(const q of front)for(const axis of ['x','y','z'])for(const turn of [-1,1]){const b=qnext(q,axis,turn),k=canonical(b);if(seen.has(k))continue;seen.add(k);next.push(b)}front=next;layers.push(next.length)}return layers}
-function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>立体自身の45°回転</b>を組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、X・Y・Z の3軸すべてを操作できます。<br>3軸を各±45°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>以前の「8×8＝64姿勢」は固定2軸に限る数え方でした。3軸の45°回転を任意の順序で重ねる場合、64姿勢には限定されません。ランダム正解率も安易には表示しません。</small>`}
+function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>立体自身の45°回転</b>を組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、指の移動方向から3軸を自動的に選びます。<br>3軸を各±45°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>以前の「8×8＝64姿勢」は固定2軸に限る数え方でした。3軸の45°回転を任意の順序で重ねる場合、64姿勢には限定されません。ランダム正解率も安易には表示しません。</small>`}
 function openModal(){updateAnalysis();$('modal').classList.add('show')};function closeModal(){$('modal').classList.remove('show');refresh()}
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-window.__twinLab={getState:()=>({stage,step:45,q:q.slice(),moves,finished,free,axisChoice}),setStage,setAxis:(a)=>{axisChoice=a;updateAxis()},rotateOnce,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice()};
-soundUI();updateAxis();setStage(stage);
+window.__twinLab={getState:()=>({stage,step:45,q:q.slice(),moves,finished,free,dragAxis:drag?.axis||null}),setStage,rotateOnce,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice()};
+soundUI();setStage(stage);
 </script>
 </body>
 </html>

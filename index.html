@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — ROTATION LAB</title>
+<title>TWIN SHADOW — SHADOW STUDIO</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -31,39 +31,49 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 @media(max-height:735px){.app{padding-top:calc(env(safe-area-inset-top,0px) + 4px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 4px)}.top{min-height:37px}.mode-row{margin-top:5px}.mode-row button{height:30px}.heading{min-height:58px;padding-top:7px}.heading h1{font-size:16px;margin-top:4px}.heading p{font-size:10px;margin-top:2px}.shadowbox{max-width:155px;aspect-ratio:1.07;border-radius:16px;padding:8px}.shadows.single .shadowbox{max-width:158px;flex-basis:158px}.shadows{gap:8px;margin-top:4px}.legend{margin-top:5px}.bottom{min-height:51px;padding-top:4px}.levels{margin-top:4px}.stage-guide{bottom:0}}
 @media(max-height:600px){.heading{min-height:44px}.heading p{display:none}.stage-area{min-height:110px}.shadowbox{max-width:124px;aspect-ratio:1.08}.shadows.single .shadowbox{max-width:129px}.legend{margin-top:2px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* The play surface owns both live and goal shadows. All are captured by one canvas. */
+.mode-row,.shadows,.shadowbox{display:none!important}
+.heading{padding-top:16px;min-height:82px}
+.stage-area{min-height:260px;flex:1}
+.stage-guide{bottom:9px}
+.legend{margin-top:0;padding:7px 0 5px;gap:22px}
+.bottom{margin-top:0;padding-top:6px}
+@media(max-height:735px){.heading{min-height:65px;padding-top:9px}.stage-area{min-height:200px}.legend{padding:3px 0}}
+@media(max-height:600px){.heading{min-height:54px;padding-top:5px}.stage-area{min-height:145px}}
 </style>
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="brand">TWIN SHADOW<small>ROTATION LAB · EXPERIMENT 01</small></div><div class="topt">
+<header class="top"><div class="brand">TWIN SHADOW<small>SHADOW STUDIO · 45°</small></div><div class="topt">
 <button class="iconbtn" id="reset" title="この問題を最初から" aria-label="この問題を最初から"><svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7.3M4 4v6h6"/></svg></button>
 <button class="iconbtn" id="sound" title="音を切り替える" aria-label="音を切り替える"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM17 9a5 5 0 0 1 0 6M19 6a9 9 0 0 1 0 12"/></svg></button>
 <button class="iconbtn" id="menu" title="分析・設定" aria-label="分析・設定"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></header>
-<nav class="mode-row" aria-label="回転角度を比較"><button data-step="90">90°</button><button data-step="45">45°</button><button data-step="30">30°</button></nav>
+
 <section class="heading"><div class="eyebrow" id="eyebrow">EXPERIMENT 01 / 06</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体を上下左右にドラッグして回転。矢印キーにも対応"></canvas><div class="orientation" id="orientation">Y 000° · X 000°</div><div class="stage-guide"> <span>← →</span> 横 <span>↑ ↓</span> 縦 · 指でカリカリ回そう</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="立体を上下左右にドラッグして回転。矢印キーにも対応"></canvas><div class="orientation" id="orientation">Y 000° · X 000°</div><div class="stage-guide"> <span>← →</span> 横 <span>↑ ↓</span> 縦 · 45°ずつ回転</div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
-<section class="shadows" id="shadows"><div class="shadowbox" id="shadowcard0"><div class="head"><span>FRONT · まえ</span><span class="badge-check">✓</span></div><canvas id="proj0"></canvas></div><div class="shadowbox" id="shadowcard1"><div class="head"><span>SIDE · よこ</span><span class="badge-check">✓</span></div><canvas id="proj1"></canvas></div></section>
-<div class="legend"><span class="legendpart"><i class="swatch"></i>目標の影</span><span class="legendpart"><i class="swatch live"></i>いまの影</span></div>
+
+<div class="legend"><span class="legendpart"><i class="swatch"></i>目標の影</span><span class="legendpart"><i class="swatch live"></i>動かしている影</span></div>
 <footer class="bottom"><div id="status" class="status">立体をスワイプして回してみよう</div><nav class="levels" id="levels" aria-label="実験ステージを選択"></nav></footer>
 </main>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="検証データ"><div class="sheet"><div class="sheethead"><h2>回転の実験室</h2><button id="close" class="close" aria-label="閉じる">×</button></div>
-<p>90°、45°、30°を切り替えて、同じ立体と目標の影を比較できます。指に追従して回転し、離すと最も近い角度に「カチッ」と吸着します。</p>
+<p>45°刻みで立体を回します。目の前の立体と左右のスクリーンに映る影は、ひとつの操作エリアで同時に変化します。薄い輪郭が目標、シアンの色が現在の影です。</p>
 <div class="switchrow"><strong>回転音</strong><button id="soundToggle">ON</button></div>
 <div class="switchrow"><strong>自由に回す（目標を隠す）</strong><button id="freeToggle">OFF</button></div>
 <h3>この問題の数学</h3><div class="analysis" id="analysis">計算中…</div>
-<p>※この実験版では横（Y軸）・縦（X軸）の角度を独立に指定する固定2軸方式です。立方体の90°回転群24姿勢とは異なります。判定は立体の正射影シルエットを画素比較します。</p>
+<p>※この実験版では横（Y軸）・縦（X軸）の角度を独立に指定する固定2軸方式で45°刻み（8×8＝64角度ペア）です。異なる角度ペアでも同じ立体姿勢や影になる場合があります。判定は立体の正射影シルエットを画素比較します。</p>
 <button class="sheetbutton" id="return">ゲームに戻る</button></div></div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),rad=d=>d*Math.PI/180;
 const STAGES=[
- {title:'ひとつの影。',sub:'横に回すと、形はどう変わる？',blocks:[[0,0,0],[1,0,0],[2,0,0]],goal:[90,0],views:1},
- {title:'ふたつの影。',sub:'正面と横、両方の形を合わせよう',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],goal:[90,0],views:2},
- {title:'高さの秘密。',sub:'横だけではなく、縦にも回そう',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1]],goal:[90,90],views:2},
- {title:'橋の向こう側。',sub:'影にあいた隙間もヒントになる',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[2,2,0],[2,1,0],[2,0,0],[2,0,1]],goal:[180,90],views:2},
- {title:'折れ曲がる空間。',sub:'同じ立体が、全く違う形に見える',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],goal:[270,90],views:2},
- {title:'TWIN SHADOW。',sub:'ふたつの投影から空間を読み解こう',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2],[1,2,2]],goal:[180,180],views:2}
+ {title:'ひとつの影。',sub:'薄い影とシアンの影を重ねよう',blocks:[[0,0,0],[1,0,0],[2,0,0]],goal:[45,0],views:1},
+ {title:'ふたつの影。',sub:'正面と横、両方の形を合わせよう',blocks:[[0,0,0],[1,0,0],[1,1,0],[1,1,1]],goal:[45,0],views:2},
+ {title:'高さの秘密。',sub:'横だけではなく、縦にも回そう',blocks:[[0,0,0],[0,1,0],[1,1,0],[1,1,1],[2,1,1]],goal:[90,45],views:2},
+ {title:'橋の向こう側。',sub:'影にあいた隙間もヒントになる',blocks:[[0,0,0],[0,1,0],[0,2,0],[1,2,0],[2,2,0],[2,1,0],[2,0,0],[2,0,1]],goal:[135,45],views:2},
+ {title:'折れ曲がる空間。',sub:'同じ立体が、全く違う形に見える',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2]],goal:[225,90],views:2},
+ {title:'TWIN SHADOW。',sub:'ふたつの投影から空間を読み解こう',blocks:[[0,0,0],[1,0,0],[2,0,0],[2,1,0],[2,1,1],[1,1,1],[1,2,1],[0,2,1],[0,2,2],[1,2,2]],goal:[315,135],views:2}
 ];
 // Normalize the voxel-center coordinates once, preserving the true orthographic silhouette.
 for(const s of STAGES){const low=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),high=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(low[i]+high[i])/2));}
@@ -74,22 +84,46 @@ const matrix=(yaw,pitch)=>mm(RX(rad(pitch)),RY(rad(yaw)));
 const dot=(a,b)=>a.reduce((t,n,i)=>t+n*b[i],0),cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit=v=>v.map(n=>n/Math.hypot(...v));
 const look=unit([5,7.1,9]),right=unit([look[2],0,-look[0]]),up=unit(cross(look,right));
 const hull=pts=>{const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]),cross2=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const lower=[],upper=[];for(const p of a){while(lower.length>1&&cross2(lower.at(-2),lower.at(-1),p)<=0)lower.pop();lower.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(upper.length>1&&cross2(upper.at(-2),upper.at(-1),p)<=0)upper.pop();upper.push(p)}lower.pop();upper.pop();return lower.concat(upper)};
-let stage=0,step=30,yaw=0,pitch=0,displayYaw=0,displayPitch=0,moves=0,drag=null,snapping=false,finished=false,free=false,animToken=0,pointerID=null,soundOn=true,audio=null,wonTimer=0;
-let best={};try{const data=JSON.parse(localStorage.getItem('twin_rotation_lab_v1')||'{}');best=data.best||{};soundOn=data.sound!==false;step=[90,45,30].includes(data.step)?data.step:30;stage=Math.min(5,Math.max(0,data.stage||0))}catch(_){ }
-const scene=$('scene'),ctx=scene.getContext('2d'),panel=[$('proj0'),$('proj1')],panelCtx=panel.map(p=>p.getContext('2d')),cards=[$('shadowcard0'),$('shadowcard1')];
+let stage=0,step=45,yaw=0,pitch=0,displayYaw=0,displayPitch=0,moves=0,drag=null,snapping=false,finished=false,free=false,animToken=0,pointerID=null,soundOn=true,audio=null,wonTimer=0;
+let best={};try{const data=JSON.parse(localStorage.getItem('twin_shadow_45_v2')||'{}');best=data.best||{};soundOn=data.sound!==false;step=45;stage=Math.min(5,Math.max(0,data.stage||0))}catch(_){ }
+const scene=$('scene'),ctx=scene.getContext('2d');
 const masksCache=new Map(),countCache=new Map();const SIZE=144,UNIT=SIZE/5.8;
 function sizeCanvas(el,c){const box=el.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.round(box.width*dpr),h=Math.round(box.height*dpr);if(el.width!==w||el.height!==h){el.width=w;el.height=h}c.setTransform(dpr,0,0,dpr,0,0);return {w:box.width,h:box.height};}
 function silhouette(c,shape,m,view,scale,cx,cy,fill){c.fillStyle=fill;for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale])}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();}}
 function maskFor(sindex,y,p,v){y=((y%360)+360)%360;p=((p%360)+360)%360;const id=`${sindex}|${y}|${p}|${v}`;if(masksCache.has(id))return masksCache.get(id);const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d',{willReadFrequently:true});c.clearRect(0,0,SIZE,SIZE);silhouette(c,STAGES[sindex].shape,matrix(y,p),v,UNIT,SIZE/2,SIZE/2,'#ffffff');const rgba=c.getImageData(0,0,SIZE,SIZE).data, bits=new Uint8Array(SIZE*SIZE);for(let i=0;i<bits.length;i++)bits[i]=rgba[i*4+3]>=100?1:0;const entry={bits};masksCache.set(id,entry);return entry;}
 function iou(a,b){let common=0,un=0;for(let i=0;i<a.length;i++){if(a[i]|b[i])un++;if(a[i]&b[i])common++}return un?common/un:1;}
 function matchingPose(y,p){const goal=STAGES[stage],tol=.996;for(let i=0;i<goal.views;i++)if(iou(maskFor(stage,y,p,i).bits,maskFor(stage,...goal.goal,i).bits)<tol)return false;return true;}
-function colorMask(mask,fill,border){const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d'),data=c.createImageData(SIZE,SIZE),o=data.data;for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){const k=y*SIZE+x;if(!mask[k])continue;let edge=false;if(border)for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]])if(!mask[(y+dy)*SIZE+(x+dx)]||x+dx<0||x+dx>=SIZE||y+dy<0||y+dy>=SIZE){edge=true;break}const rgba=edge?border:fill;const i=k*4;for(let j=0;j<4;j++)o[i+j]=rgba[j]}c.putImageData(data,0,0);return cn;}
-const coloredCache=new Map();function paintTarget(id,bits){if(coloredCache.has(id))return coloredCache.get(id);const colored={bg:colorMask(bits,[227,237,239,255],[143,172,179,255]),edge:colorMask(bits,[0,0,0,0],[124,156,163,220])};coloredCache.set(id,colored);return colored}
+function colorMask(mask,fill,border){const cn=document.createElement('canvas');cn.width=cn.height=SIZE;const c=cn.getContext('2d'),data=c.createImageData(SIZE,SIZE),o=data.data;for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){const k=y*SIZE+x;if(!mask[k])continue;let edge=false;if(border)for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0],[0,2],[0,-2]])if(x+dx<0||x+dx>=SIZE||y+dy<0||y+dy>=SIZE||!mask[(y+dy)*SIZE+(x+dx)]){edge=true;break}const rgba=edge?border:fill;const i=k*4;for(let j=0;j<4;j++)o[i+j]=rgba[j]}c.putImageData(data,0,0);return cn;}
+const coloredCache=new Map();function paintTarget(id,bits){if(coloredCache.has(id))return coloredCache.get(id);const colored={bg:colorMask(bits,[227,237,239,255],[143,172,179,255]),edge:colorMask(bits,[0,0,0,0],[70,112,124,250])};coloredCache.set(id,colored);return colored}
 let pending=false;function refresh(){if(!pending){pending=true;requestAnimationFrame(redraw)}}
-function drawScene(){const {w,h}=sizeCanvas(scene,ctx);if(w<10||h<10)return;ctx.clearRect(0,0,w,h);const s=STAGES[stage],m=matrix(displayYaw,displayPitch),size=Math.min(w/5.85,h/5.5),cx=w*.50,cy=h*.48;
+const liveWall=document.createElement('canvas');liveWall.width=liveWall.height=SIZE;const liveWallCtx=liveWall.getContext('2d');
+function wall(ctx,view,project,scale,cy,model){
+ const S=SIZE/UNIT/2, D=3.18, mapping=(u,v)=>view===0?project([u,v,-D]):project([-D,v,u]);
+ const p0=mapping(-S,S),p1=mapping(S,S),p2=mapping(-S,-S),p3=mapping(S,-S),
+  a=(p1[0]-p0[0])/SIZE,b=(p1[1]-p0[1])/SIZE,c=(p2[0]-p0[0])/SIZE,d=(p2[1]-p0[1])/SIZE;
+ // The two glass screens are part of the interaction scene, not independent thumbnails.
+ ctx.save();ctx.beginPath();[p0,p1,p3,p2].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();
+ ctx.fillStyle='rgba(255,255,255,.72)';ctx.fill();ctx.strokeStyle='#cde5e4';ctx.lineWidth=1.25;ctx.stroke();
+ ctx.save();ctx.transform(a,b,c,d,p0[0],p0[1]);
+ const bits=maskFor(stage,...STAGES[stage].goal,view).bits;
+ if(!free){const target=paintTarget(`${stage}|${view}`,bits);ctx.drawImage(target.bg,0,0);}
+ liveWallCtx.clearRect(0,0,SIZE,SIZE);
+ silhouette(liveWallCtx,STAGES[stage].shape,model,view,UNIT,SIZE/2,SIZE/2,'rgba(8,181,185,.63)');
+ ctx.drawImage(liveWall,0,0);
+ if(!free){ctx.drawImage(paintTarget(`${stage}|${view}`,bits).edge,0,0)}
+ ctx.restore();
+ const matched=!free&&iou(maskFor(stage,((yaw%360)+360)%360,((pitch%360)+360)%360,view).bits,bits)>=.996;
+ ctx.save();ctx.font='700 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=matched?'#089c98':'#6e969c';ctx.textAlign='center';
+ const head=[(p0[0]+p1[0])/2,(p0[1]+p1[1])/2];
+ ctx.fillText((view===0?'まえ':'よこ')+(matched?'   ✓':''),head[0],Math.max(15,head[1]-10));ctx.restore();
+}
+function drawScene(){const {w,h}=sizeCanvas(scene,ctx);if(w<10||h<10)return;ctx.clearRect(0,0,w,h);const s=STAGES[stage],m=matrix(displayYaw,displayPitch),size=Math.min(w/8.4,h/8.5),cx=w*.50,cy=h*.55;
+ const project=p=>[cx+dot(p,right)*size,cy-dot(p,up)*size];
+ if(s.views===2)wall(ctx,1,project,size,cy,m);
+ wall(ctx,0,project,size,cy,m);
  // Soft floor shadow anchors the object without clutter.
  ctx.save();ctx.translate(cx,cy+h*.28);ctx.scale(1,.28);const g=ctx.createRadialGradient(0,0,3,0,0,size*1.6);g.addColorStop(0,'rgba(28,133,137,.13)');g.addColorStop(1,'rgba(28,133,137,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,size*1.6,0,Math.PI*2);ctx.fill();ctx.restore();
- const screen=p=>[cx+dot(p,right)*size,cy-dot(p,up)*size];const occ=new Set(s.blocks.map(v=>v.join(',')));const faces=[];
+ const screen=project;const occ=new Set(s.blocks.map(v=>v.join(',')));const faces=[];
  for(let i=0;i<s.blocks.length;i++){
    const source=s.blocks[i],base=s.shape[i];for(let axis=0;axis<3;axis++)for(const dir of [-1,1]){const neighbor=source.slice();neighbor[axis]+=dir;if(occ.has(neighbor.join(',')))continue;
    const nor=[0,0,0];nor[axis]=dir;const normal=mv(m,nor);if(dot(normal,look)<.005)continue;
@@ -101,21 +135,13 @@ function drawScene(){const {w,h}=sizeCanvas(scene,ctx);if(w<10||h<10)return;ctx.
  faces.sort((a,b)=>a.depth-b.depth);ctx.lineJoin='round';for(const f of faces){ctx.beginPath();f.pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=f.fill;ctx.fill();ctx.lineWidth=1.05;ctx.strokeStyle='rgba(25,103,116,.25)';ctx.stroke();ctx.beginPath();ctx.moveTo(...f.pts[0]);ctx.lineTo(...f.pts[1]);ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=.9;ctx.stroke();}
  $('orientation').textContent=`Y ${String(((Math.round(displayYaw)%360)+360)%360).padStart(3,'0')}°  ·  X ${String(((Math.round(displayPitch)%360)+360)%360).padStart(3,'0')}°`;
 }
-function drawPanel(i){const canvas=panel[i],c=panelCtx[i],{w,h}=sizeCanvas(canvas,c);if(w<10||h<10)return;c.clearRect(0,0,w,h);const side=Math.min(w,h),x=(w-side)/2,y=(h-side)/2;
- const goal=STAGES[stage],desired=maskFor(stage,...goal.goal,i).bits,tinted=paintTarget(`${stage}|${i}`,desired);
- if(!free)c.drawImage(tinted.bg,x,y,side,side)
- // Render active shape directly for fluid sub-degree movement during a drag.
- c.save();c.translate(x,y);const factor=side/SIZE;c.scale(factor,factor);
- silhouette(c,goal.shape,matrix(displayYaw,displayPitch),i,UNIT,SIZE/2,SIZE/2,'rgba(24,180,185,.93)');c.restore();
- if(!free)c.drawImage(tinted.edge,x,y,side,side)
-}
-function redraw(){pending=false;drawScene();drawPanel(0);if(STAGES[stage].views===2)drawPanel(1)}
-function syncCards(){const y=((yaw%360)+360)%360,p=((pitch%360)+360)%360;for(let i=0;i<2;i++){const active=i<STAGES[stage].views,ok=active&&!free&&iou(maskFor(stage,y,p,i).bits,maskFor(stage,...STAGES[stage].goal,i).bits)>=.996;cards[i].classList.toggle('ok',ok)}}
-function persist(){try{localStorage.setItem('twin_rotation_lab_v1',JSON.stringify({stage,step,sound:soundOn,best}))}catch(_){}}
-function updateModeButtons(){document.querySelectorAll('[data-step]').forEach(b=>{b.classList.toggle('active',+b.dataset.step===step);b.setAttribute('aria-pressed',String(+b.dataset.step===step))})}
+function redraw(){pending=false;drawScene()}
+function syncCards(){refresh()}
+function persist(){try{localStorage.setItem('twin_shadow_45_v2',JSON.stringify({stage,step,sound:soundOn,best}))}catch(_){}}
+function updateModeButtons(){}
 function updateLevels(){const nav=$('levels');nav.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(Object.keys(best).some(k=>k.startsWith(i+'-'))?' done':'');b.setAttribute('aria-label',`実験${i+1} ${s.title}`);b.title=s.title;b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));nav.appendChild(b)})}
-function setStage(i){stage=i;stopMotion();yaw=pitch=displayYaw=displayPitch=0;moves=0;finished=false;clearTimeout(wonTimer);$('winoverlay').classList.remove('on');const s=STAGES[i];$('eyebrow').textContent=`EXPERIMENT ${String(i+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;$('shadows').classList.toggle('single',s.views===1);$('status').textContent='立体をスワイプして回してみよう';updateLevels();syncCards();persist();refresh()}
-function setStep(newStep){if(step===newStep)return;step=newStep;setStage(stage);updateModeButtons();$('status').textContent=`${step}°刻みに切り替え · 同じ問題を最初から`;persist();clickTone()}
+function setStage(i){stage=i;stopMotion();yaw=pitch=displayYaw=displayPitch=0;moves=0;finished=false;clearTimeout(wonTimer);$('winoverlay').classList.remove('on');const s=STAGES[i];$('eyebrow').textContent=`EXPERIMENT ${String(i+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')}`;$('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;$('status').textContent='立体をスワイプして回してみよう';updateLevels();syncCards();persist();refresh()}
+function setStep(newStep){return}
 function setupAudio(){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume()}catch(_){}}
 function tone(hz,delay,dur,volume){if(!soundOn)return;setupAudio();if(!audio)return;try{const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.setValueAtTime(hz,t);o.frequency.exponentialRampToValueAtTime(hz*.83,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(volume,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audio.destination);o.start(t);o.stop(t+dur+.012)}catch(_){}}
 function clickTone(){tone(690,0,.042,.021)}function successTone(){tone(523,0,.17,.027);tone(659,.10,.20,.029);tone(784,.20,.27,.028)}
@@ -129,12 +155,12 @@ function dragMove(e){if(!drag||pointerID!==e.pointerId)return;const dx=e.clientX
 function dragEnd(e,canceled=false){if(!drag||pointerID!==e.pointerId)return;const d=drag;drag=null;pointerID=null;try{scene.releasePointerCapture(e.pointerId)}catch(_){ }const raw=d.units,steps=canceled?0:Math.round(raw);const y=d.startYaw+(d.axis==='y'?steps*step:0),p=d.startPitch+(d.axis==='x'?steps*step:0);if(steps!==0&&steps!==d.lastDetent)clickTone();settle(y,p,Math.abs(steps));}
 scene.addEventListener('pointerdown',dragStart);scene.addEventListener('pointermove',dragMove);scene.addEventListener('pointerup',e=>dragEnd(e));scene.addEventListener('pointercancel',e=>dragEnd(e,true));scene.addEventListener('keydown',e=>{const map={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowDown:['x',1],ArrowUp:['x',-1]};if(map[e.key]){e.preventDefault();stepOnce(...map[e.key])}});
 function nextStage(){setStage((stage+1)%STAGES.length)}$('next').addEventListener('click',nextStage);
-$('reset').addEventListener('click',()=>setStage(stage));document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>setStep(+b.dataset.step)));
+$('reset').addEventListener('click',()=>setStage(stage));
 function updateSound(){const a=$('soundToggle');a.textContent=soundOn?'ON':'OFF';a.classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#239da8':'#a0abad'}
 function flipSound(){soundOn=!soundOn;updateSound();persist();if(soundOn)clickTone()}$('sound').addEventListener('click',flipSound);$('soundToggle').addEventListener('click',flipSound);
-function toggleFree(){free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);cards.forEach(c=>c.classList.remove('ok'));$('status').textContent=free?'自由回転 · 影の変化を観察しよう':'目標に影をぴったり重ねよう';syncCards();refresh()}$('freeToggle').addEventListener('click',toggleFree);
+function toggleFree(){free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);$('status').textContent=free?'自由回転 · 影の変化を観察しよう':'目標に影をぴったり重ねよう';syncCards();refresh()}$('freeToggle').addEventListener('click',toggleFree);
 function collectStats(){const id=`${stage}|${step}|${STAGES[stage].views}`;if(countCache.has(id))return countCache.get(id);const angles=360/step;let count=0;const distinct=new Set();const goal=STAGES[stage];for(let y=0;y<angles;y++)for(let p=0;p<angles;p++){const yy=y*step,pp=p*step;if(matchingPose(yy,pp))count++;let sig='';for(let v=0;v<goal.views;v++){const bits=maskFor(stage,yy,pp,v).bits;let hash=2166136261;for(let k=0;k<bits.length;k++)if(bits[k])hash=Math.imul(hash^k,16777619);sig+=hash.toString(16)+';'}distinct.add(sig)}const result={total:angles*angles,wins:count,distinct:distinct.size,rate:100*count/(angles*angles)};countCache.set(id,result);return result;}
-function writeAnalysis(){const el=$('analysis');el.textContent='全姿勢を列挙して計算中…';setTimeout(()=>{const s=collectStats();const key=`${stage}-${step}`;el.innerHTML=`固定2軸で選べる姿勢 <b>${s.total}通り</b>（${360/step} × ${360/step}）<br>ふたつの影を同時に満たす姿勢 <b>${s.wins}通り</b><br>姿勢を均等に選ぶと当たる確率 <b>${s.rate.toFixed(2)}%</b><br>異なる投影パターンの組 <b>${s.distinct}通り</b><br>この刻みでのベスト記録 <b>${best[key]??'未クリア'}${best[key]?'クリック':''}</b><br><small>※「均等に姿勢を選ぶ」確率で、ランダムなスワイプの平均手数ではありません。画素ごとの投影比較による数値です。</small>`},40)}
+function writeAnalysis(){const el=$('analysis');el.textContent='全姿勢を列挙して計算中…';setTimeout(()=>{const s=collectStats();const key=`${stage}-${step}`;el.innerHTML=`固定2軸で選べる姿勢 <b>${s.total}通り</b>（${360/step} × ${360/step}）<br>目標の影を満たす角度ペア <b>${s.wins}通り</b><br>姿勢を均等に選ぶと当たる確率 <b>${s.rate.toFixed(2)}%</b><br>異なる投影パターンの組 <b>${s.distinct}通り</b><br>この刻みでのベスト記録 <b>${best[key]??'未クリア'}${best[key]?'クリック':''}</b><br><small>※「均等に姿勢を選ぶ」確率で、ランダムなスワイプの平均手数ではありません。画素ごとの投影比較による数値です。</small>`},40)}
 function openModal(){writeAnalysis();$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show');refresh()}
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});window.addEventListener('resize',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
 // Lightweight deterministic inspection API for development tests only.

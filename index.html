@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f6faf9">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>TWIN SHADOW — RELEASE CHECK v9</title>
+<title>TWIN SHADOW — TRUE SWIPE v10</title>
 <style>
 :root{--bg:#f6faf9;--ink:#24464e;--sub:#7d979c;--cyan:#08aab4;--cyan-dark:#078d9c;--edge:#dfeae9;--paper:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -20,6 +20,8 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 .heading{text-align:center;flex:none;padding-top:13px;min-height:70px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.20em;color:#1c9da5}.heading h1{font-size:18px;font-weight:820;margin:6px 0 0;letter-spacing:.035em}.heading p{color:#7c999f;font-size:11px;margin:4px 0 0;line-height:1.45}
 .stage-area{flex:1;min-height:160px;position:relative;display:flex;align-items:stretch;justify-content:center;overflow:hidden}
 #scene{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.stage-area.touching #scene{cursor:grabbing}
+.turn-cue{pointer-events:none;position:absolute;top:10px;left:50%;transform:translate(-50%,-4px);opacity:0;transition:opacity .07s,transform .07s;background:rgba(255,255,255,.96);border:1px solid #b7e2e0;box-shadow:0 4px 15px #14575c0c;border-radius:99px;min-width:84px;text-align:center;padding:7px 13px;color:#0b939f;font-size:13px;line-height:1;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+.turn-cue.show{opacity:1;transform:translate(-50%,0)}
 .stage-guide{pointer-events:none;position:absolute;bottom:4px;left:0;right:0;text-align:center;color:#86a3a8;font-size:10px;font-weight:690;letter-spacing:.015em}.stage-guide span{color:#1c9ea9;font-weight:900;font-size:15px;vertical-align:-1px;margin:0 4px}
 .orientation{position:absolute;top:7px;left:8px;font-size:10px;font-variant-numeric:tabular-nums;color:#90a9ac;letter-spacing:.08em;font-weight:650;pointer-events:none;opacity:.85}
 .shadows{margin-top:8px;display:flex;gap:11px;justify-content:center;flex:none;min-height:0}.shadowbox{position:relative;flex:0 1 190px;min-width:0;max-width:190px;aspect-ratio:1.1;border:1px solid #ddeae9;border-radius:20px;background:#fff;padding:10px 9px 7px;box-shadow:0 9px 24px #174b4f08;transition:border-color .15s,background .15s}.shadowbox.ok{border-color:#54c6c4;background:#f9fffe}
@@ -83,7 +85,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 
 <section class="heading"><div class="eyebrow" id="eyebrow">STAGE 01 / 12</div><h1 id="stageTitle">ひとつの影</h1><p id="stageSub">回して、シルエットを重ねよう</p></section>
 <div class="methodbar" role="group" aria-label="ヒントの比較"><button class="methodbtn" data-method="A" aria-pressed="false">A · 透ける</button><button class="methodbtn" data-method="B" aria-pressed="false">B · さわる</button><button class="methodbtn active" data-method="C" aria-pressed="true">C · 両方</button></div>
-<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="指を一度スワイプすると90度回転。10問目から45度回転。途中でぬるぬる動かず、カチッと1回転する"></canvas><div class="stage-guide">1スワイプ＝1回転 · 指を離すと判定</div>
+<section class="stage-area" id="stagearea"><canvas id="scene" tabindex="0" aria-label="指を一度スワイプすると90度回転。10問目から45度回転。途中でぬるぬる動かず、カチッと1回転する"></canvas><div class="stage-guide">1スワイプ＝1回転 · 指を離すと判定</div><div id="turnCue" class="turn-cue" aria-hidden="true"></div>
 <div id="winoverlay" class="winoverlay" role="status" aria-live="polite"><div class="winpanel"><div class="stars">✧ ✦ ✧</div><h2 id="winTitle">ぴったり！</h2><p id="winSub">2つの影がそろった</p><button id="next">次の形へ →</button></div></div></section>
 
 
@@ -96,7 +98,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visibl
 <div class="switchrow"><strong>回転音</strong><button id="soundToggle">ON</button></div>
 <div class="switchrow"><strong>自由に回す（目標を隠す）</strong><button id="freeToggle">OFF</button></div>
 <h3>この問題の数学</h3><div class="analysis" id="analysis">計算中…</div>
-<p>※立体自身の3軸を回転します。第1〜9問は90°の姿勢のみ、第10〜12問は45°の姿勢を使用。正解判定は指定された投影の一致です。</p>
+<p>※第1〜9問は立体の軸で90°回転。第10〜12問は画面に対して横・縦・ひねりの3軸を45°回転します。45°では指を離したときだけ回転を確定し、回転完了後に正解判定します。</p>
 <button class="sheetbutton" id="return">ゲームに戻る</button></div></div>
 <script>
 'use strict';
@@ -132,6 +134,20 @@ const STAGES=[
 ];
 for(const s of STAGES){const lo=[0,1,2].map(i=>Math.min(...s.blocks.map(p=>p[i]))),hi=[0,1,2].map(i=>Math.max(...s.blocks.map(p=>p[i])));s.shape=s.blocks.map(p=>p.map((n,i)=>n-(lo[i]+hi[i])/2));s.goalQ=makeGoal(s.path,s.step);s.occ=new Set(s.blocks.map(p=>p.join(',')));}
 const camera=norm([5,7.1,9]),camRight=norm([camera[2],0,-camera[0]]),camUp=norm(cross(camera,camRight));
+// 45° controls: exactly three stable axes relative to the SCREEN, not the tilted object.
+// A horizontal swipe turns about screen up; a vertical swipe turns about screen right.
+// A two-finger twist turns about the viewer's line of sight. The same gesture always
+// has the same axis, regardless of the current orientation of the sculpture.
+function qaxis(v,deg){const t=deg*RAD/2,k=Math.sin(t);return [Math.cos(t),v[0]*k,v[1]*k,v[2]*k];}
+function screenAxis(which){return which==='h'?camUp:which==='v'?camRight:camera;}
+function qscreen(q,which,sign,step=45){return qnormal(qm(qaxis(screenAxis(which),step*sign),q));}
+const STEPS45=[[['h',1]],[['v',-1]],[['h',1],['v',-1]]];
+for(let i=9;i<STAGES.length;i++){
+ const s=STAGES[i];s.path=STEPS45[i-9].map(step=>step.slice());
+ let goal=ID.slice();for(const [axis,sign] of s.path)goal=qscreen(goal,axis,sign,s.step);
+ s.goalQ=goal;
+}
+
 function hull(pts){const a=pts.slice().sort((p,q)=>p[0]-q[0]||p[1]-q[1]);const cr=(p,q,r)=>(q[0]-p[0])*(r[1]-p[1])-(q[1]-p[1])*(r[0]-p[0]);if(a.length<3)return a;const l=[],u=[];for(const p of a){while(l.length>1&&cr(l.at(-2),l.at(-1),p)<=0)l.pop();l.push(p)}for(let i=a.length-1;i>=0;i--){const p=a[i];while(u.length>1&&cr(u.at(-2),u.at(-1),p)<=0)u.pop();u.push(p)}l.pop();u.pop();return l.concat(u)}
 function silhouette(c,shape,m,view,scale,cx,cy,fill,weld=false){c.fillStyle=fill;if(weld){c.strokeStyle=fill;c.lineJoin='round';c.lineWidth=1.2;}for(const base of shape){const pts=[];for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const p=mv(m,[base[0]+x,base[1]+y,base[2]+z]);pts.push([cx+(view===0?p[0]:p[2])*scale,cy-p[1]*scale]);}const poly=hull(pts);c.beginPath();poly.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fill();if(weld)c.stroke();}}
 let stage=0,q=ID.slice(),displayQ=ID.slice(),targetQ=ID.slice(),moves=0,finished=false,free=false,drag=null,twist=null,soundOn=true,audio=null,animation=null,animID=0,raf=0;
@@ -223,7 +239,7 @@ function hitBlockAt(pt){for(let i=hitFaces.length-1;i>=0;i--)if(pointInPoly(pt,h
 function clearHint(){if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}if(hintBlock!==-1){hintBlock=-1;refresh();}}
 function setExperiment(which){if(!['A','B','C'].includes(which))return;clearHint();experiment=which;
  document.querySelectorAll('.methodbtn').forEach(b=>{const on=b.dataset.method===which;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
- $('stagearea').querySelector('.stage-guide').textContent=which==='A'?'1スワイプ＝1回転 · 指を離すと判定':'1スワイプ＝1回転 · 指を離すと判定';
+ $('stagearea').querySelector('.stage-guide').textContent=STEP===45?'横・縦に動かし、離すと45°回転':'1スワイプ＝90° · 指を離すと判定';
  status(which==='A'?'A · 透ける立体と濃淡の影':which==='B'?'B · 長押しで部分投影':'C · 両方のヒントを試そう');
  refresh();
 }
@@ -265,10 +281,11 @@ function successSound(){tone(659.255,.42,.030);tone(1318.51,.25,.0035,.015)} // 
 function status(msg){$('status').textContent=msg}
 function updateLevels(){const el=$('levels');el.innerHTML='';STAGES.forEach((s,i)=>{const b=document.createElement('button');b.className='levelbtn'+(i===stage?' active':'')+(best[i]!=null?' done':'');b.setAttribute('aria-label',`第${i+1}問 ${s.title} · ${s.step}°`);b.innerHTML='<span>'+String(i+1)+'</span>';b.addEventListener('click',()=>setStage(i));el.appendChild(b)})}
 function setStage(i){awaitingReleaseCheck=false;clearHint();stage=clamp(i,0,STAGES.length-1);pointers.clear();drag=twist=null;cancelAnim();q=ID.slice();displayQ=ID.slice();targetQ=ID.slice();moves=0;finished=false;$('winoverlay').classList.remove('on');const s=STAGES[stage];STEP=s.step;
- $('degreeBrand').textContent=STEP===90?'FIRST 90°':'UNLOCKED · 45°';
+ $('degreeBrand').textContent=STEP===90?'FIRST 90°':'45° · SWIPE CONTROL';
  $('eyebrow').textContent=stage===9?'NEW · 45° UNLOCKED':`STAGE ${String(stage+1).padStart(2,'0')} / ${String(STAGES.length).padStart(2,'0')} · ${STEP}°`;
  $('stageTitle').textContent=s.title;$('stageSub').textContent=s.sub;
- status(stage===9?'NEW! 1スワイプで45°':'1スワイプで '+STEP+'° カチッと回る');
+ status(STEP===45?'横→横回転 · 縦→縦回転':'1スワイプで90° カチッと回る');
+ $('stagearea').querySelector('.stage-guide').textContent=STEP===45?'横・縦に動かし、離すと45°回転':'1スワイプ＝90° · 指を離すと判定';clearTurnCue();
  updateLevels();save();refresh()}
 // SNAP TOUCH v8: one intentional movement = one discrete turn.
 // No fractional projection, inertial rotation, multi-step overshoot or spring-back.
@@ -290,27 +307,43 @@ function snapTurn(axis,sign){
  q=dest.slice();moves++;awaitingReleaseCheck=true;clickSound();status(`${moves} カチッ · ${STEP}°`);
  runAnim(dest,SNAP_MS,tryCheckAfterRelease);
 }
-function finalizeDrag(){drag=null;}
+function snapScreenTurn(which,sign){
+ if(finished)return;
+ const dest=qscreen(q,which,sign,STEP);
+ q=dest.slice();moves++;awaitingReleaseCheck=true;clickSound();status(`${moves} カチッ · ${STEP}°`);
+ runAnim(dest,78,tryCheckAfterRelease);
+}
+function clearTurnCue(){const e=$('turnCue');if(e){e.textContent='';e.classList.remove('show');}}
+function showTurnCue(label){const e=$('turnCue');e.textContent=label;e.classList.add('show');}
+function finalizeDrag(){drag=null;clearTurnCue();}
 function getLocal(e){const r=scene.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}
 function isSpinStart(pt){const rect=scene.getBoundingClientRect(),w=rect.width,h=rect.height,size=Math.min(w/8.45,h/8.15),cx=w*.50,cy=h*.535,rad=Math.hypot(pt.x-cx,pt.y-cy);return rad>size*1.6&&rad<size*3.25;}
-function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}const pt=getLocal(e);pointers.set(e.pointerId,pt);if(pointers.size===1){awaitingReleaseCheck=false;cancelAnim();drag={id:e.pointerId,anchor:pt,latest:pt,axis:null,sign:1,progress:0,spinPossible:isSpinStart(pt),spin:false,done:false,baseQ:q.slice(),hintCandidate:(experiment==='A'||free)?-1:hitBlockAt(pt),holding:false};
+function down(e){if(finished||e.button!==0)return;setupAudio();try{scene.setPointerCapture(e.pointerId)}catch(_){}const pt=getLocal(e);pointers.set(e.pointerId,pt);if(pointers.size===1){awaitingReleaseCheck=false;clearTurnCue();cancelAnim();drag={id:e.pointerId,anchor:pt,latest:pt,axis:null,sign:1,progress:0,spinPossible:isSpinStart(pt),spin:false,done:false,baseQ:q.slice(),hintCandidate:(experiment==='A'||free)?-1:hitBlockAt(pt),holding:false};
  if(drag.hintCandidate>=0){const pid=e.pointerId;holdTimer=setTimeout(()=>{holdTimer=null;if(drag&&drag.id===pid&&!drag.axis&&pointers.size===1){drag.holding=true;hintBlock=drag.hintCandidate;status('このブロックが作る影を表示中');refresh();}},340);}
  $('stagearea').classList.add('touching');}
- else if(pointers.size===2){clearHint();if(drag){finalizeDrag();drag=null;}const pts=[...pointers.values()];twist={lastAngle:Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x),accum:0,baseQ:q.slice(),axis:localAxisForVector(0,0,q,true),done:false};}}
+ else if(pointers.size===2){clearHint();clearTurnCue();if(drag){finalizeDrag();drag=null;}const pts=[...pointers.values()];twist={lastAngle:Math.atan2(pts[1].y-pts[0].y,pts[1].x-pts[0].x),accum:0,baseQ:q.slice(),axis:localAxisForVector(0,0,q,true),done:false,pending:0};}}
 function processDrag(pt){
- if(!drag||drag.done)return;
+ if(!drag)return;
  const d=drag,dx=pt.x-d.anchor.x,dy=pt.y-d.anchor.y,len=Math.hypot(dx,dy);
  if(d.hintCandidate>=0&&len<9){d.latest=pt;return;}
  if(d.hintCandidate>=0){clearHint();d.hintCandidate=-1;d.holding=false;}
- if(len<TOUCH_MIN){d.latest=pt;return;}
- // Center strokes control pitch/yaw; circular edge strokes control roll.
+ d.latest=pt;
+ if(STEP===45){
+   // A 45-degree step is PREPARED on movement, not applied. The gesture may be
+   // corrected or completely withdrawn before the finger is released.
+   const valid=len>=26;
+   d.intent=valid?(Math.abs(dx)>=Math.abs(dy)?'h':'v'):null;
+   d.turn=valid?(d.intent==='h'?Math.sign(dx):Math.sign(dy)):0;
+   if(valid)showTurnCue((d.intent==='h'?(d.turn>0?'→':'←'):(d.turn>0?'↓':'↑'))+' 45°');
+   else clearTurnCue();
+   return;
+ }
+ if(d.done||len<TOUCH_MIN)return;
+ // 90° remains the original object-local single-detent control.
  const w=scene.clientWidth,h=scene.clientHeight,cx=w*.5,cy=h*.535;
  const rx=d.anchor.x-cx,ry=d.anchor.y-cy,rr=Math.hypot(rx,ry)||1;
  const tan=(-ry*dx+rx*dy)/rr,rad=(rx*dx+ry*dy)/rr;
  const spin=!!(d.spinPossible&&Math.abs(tan)>Math.abs(rad)*1.35);
- // Axis picking only once; a diagonal stroke chooses its dominant direction.
- // Subsequent movement is ignored until release, so accidental extra turns
- // and a last-frame half-angle cannot happen.
  let hit;
  if(spin){hit=localAxisForVector(0,0,q,true);hit.sign*=tan>=0?1:-1;}
  else{
@@ -318,8 +351,7 @@ function processDrag(pt){
    const sy=sx===0?Math.sign(dy):0;
    hit=localAxisForVector(sx,sy,q,false);
  }
- d.done=true;d.axis=hit.axis;d.sign=hit.sign;d.latest=pt;
- snapTurn(hit.axis,hit.sign);
+ d.done=true;d.axis=hit.axis;d.sign=hit.sign;snapTurn(hit.axis,hit.sign);
 }
 function move(e){
  if(!pointers.has(e.pointerId))return;
@@ -332,10 +364,12 @@ function move(e){
    twist.lastAngle=angle;
    if(twist.done)return;
    twist.accum+=delta;
-   const threshold=(STEP===90?24:15)*RAD;
-   if(Math.abs(twist.accum)>=threshold){
-     twist.done=true;
-     snapTurn(twist.axis.axis,twist.axis.sign*Math.sign(twist.accum));
+   if(STEP===45){
+     twist.pending=Math.abs(twist.accum)>=15*RAD?Math.sign(twist.accum):0;
+     if(twist.pending)showTurnCue((twist.pending>0?'↻':'↺')+' 45°');
+     else clearTurnCue();
+   }else if(Math.abs(twist.accum)>=24*RAD){
+     twist.done=true;snapTurn(twist.axis.axis,twist.axis.sign*Math.sign(twist.accum));
    }
    return;
  }
@@ -346,32 +380,37 @@ function up(e,cancel=false){
  clearHint();
  pointers.delete(e.pointerId);
  try{scene.releasePointerCapture(e.pointerId)}catch(_){}
+ let commit=null;
  if(twist){
-   // Never add another turn on release; only the threshold commits.
-   if(pointers.size<2){twist=null;drag=null;}
+   if(!pointers.size){
+     if(!cancel&&STEP===45&&twist.pending)commit=['r',twist.pending];
+     twist=null;drag=null;
+   }
  }else if(drag&&drag.id===e.pointerId){
+   if(!cancel&&STEP===45&&drag.intent&&drag.turn)commit=[drag.intent,drag.turn];
    finalizeDrag();
  }
  if(!pointers.size)$('stagearea').classList.remove('touching');
- // Cancellation is NOT a release-based answer submission.
+ if(!pointers.size)clearTurnCue();
  if(cancel)awaitingReleaseCheck=false;
- else tryCheckAfterRelease();
+ if(commit) snapScreenTurn(...commit);
+ else if(!cancel)tryCheckAfterRelease();
  refresh();
 }
 scene.addEventListener('pointerdown',down);scene.addEventListener('pointermove',move);scene.addEventListener('pointerup',e=>up(e));scene.addEventListener('pointercancel',e=>up(e,true));scene.addEventListener('lostpointercapture',e=>{if(pointers.has(e.pointerId))up(e,true)});
 scene.addEventListener('keydown',e=>{const axis={ArrowRight:['y',1],ArrowLeft:['y',-1],ArrowUp:['x',1],ArrowDown:['x',-1],e:['z',1],q:['z',-1]};if(!axis[e.key]||finished)return;e.preventDefault();rotateOnce(...axis[e.key])});
-function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,SNAP_MS,()=>{status(`${moves} カリッ · ${STEP}°ずつ`);if(!free)checkWin()});}
+function rotateOnce(axis,turn){if(finished)return;setupAudio();cancelAnim();if(STEP===45){const screenKind=axis==='x'?'v':axis==='y'?'h':'r';snapScreenTurn(screenKind,turn);return;}const next=qnext(q,axis,turn);q=next.slice();moves++;clickSound();runAnim(next,SNAP_MS,()=>{status(`${moves} カリッ · ${STEP}°ずつ`);if(!free)checkWin()});}
 function checkWin(){if(finished||free||!matchingPose(q))return;finished=true;successSound();if(best[stage]==null||moves<best[stage])best[stage]=moves;save();$('winTitle').textContent=stage===STAGES.length-1?'すべて、そろった。':stage===8?'90°マスター！':'ぴったり！';$('winSub').textContent=`${STAGES[stage].views}つの影が一致 · ${moves}カリッで完成`;$('next').textContent=stage===STAGES.length-1?'最初の形へ →':stage===8?'45°を解放する →':'次の形へ →';$('winoverlay').classList.add('on');status(`CLEAR · ${moves}回 · BEST ${best[stage]}回`);updateLevels();}
 function soundUI(){$('soundToggle').textContent=soundOn?'ON':'OFF';$('soundToggle').classList.toggle('off',!soundOn);$('sound').style.color=soundOn?'#249ba7':'#9da9ac'}
 function toggleSound(){soundOn=!soundOn;save();soundUI();if(soundOn)clickSound();}$('sound').addEventListener('click',toggleSound);$('soundToggle').addEventListener('click',toggleSound);
 $('reset').addEventListener('click',()=>setStage(stage));$('next').addEventListener('click',()=>setStage((stage+1)%STAGES.length));
 $('freeToggle').addEventListener('click',()=>{clearHint();free=!free;$('freeToggle').textContent=free?'ON':'OFF';$('freeToggle').classList.toggle('off',!free);status(free?'自由回転 · 3軸を試そう':'2つの影をそろえよう');refresh()});
-function depth3(){let seen=new Set([canonical(ID)]),front=[ID],layers=[1];for(let i=1;i<=3;i++){const next=[];for(const q of front)for(const axis of ['x','y','z'])for(const turn of [-1,1]){const b=qnext(q,axis,turn),k=canonical(b);if(seen.has(k))continue;seen.add(k);next.push(b)}front=next;layers.push(next.length)}return layers}
-function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>${STEP}°回転</b>のみを組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、指の移動方向から3軸を自動的に選びます。<br>3軸を各±${STEP}°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>90°回転だけのステージでは最大24の空間姿勢です。45°解放後は順序によってさらに多くの姿勢に到達できます。ランダム正解率は未検証なので表示していません。</small>`}
+function depth3(){let seen=new Set([canonical(ID)]),front=[ID],layers=[1];for(let i=1;i<=3;i++){const next=[];for(const q of front)for(const axis of (STEP===45?['h','v','r']:['x','y','z']))for(const turn of [-1,1]){const b=STEP===45?qscreen(q,axis,turn):qnext(q,axis,turn),k=canonical(b);if(seen.has(k))continue;seen.add(k);next.push(b)}front=next;layers.push(next.length)}return layers}
+function updateAnalysis(){const s=STAGES[stage],layer=depth3();$('analysis').innerHTML=`この問題の目標は <b>${STEP}°回転</b>のみを組み合わせて生成。<br>現在の姿勢は <b>クォータニオン</b>で管理し、90°は立体の3軸、45°は画面に固定した横・縦・ひねりの3軸で制御します。<br>3軸を各±${STEP}°回すとき、<b>3手以内に現れる姿勢</b>は ${layer.reduce((a,b)=>a+b,0)} 通り（深さごと：${layer.join(' / ')}）。<br>問題作成時の回転手順：<b>${s.path.length}手</b>（最短手数とは限りません）。<br>現在の記録：<b>${best[stage]??'未クリア'}</b><br><small>90°回転だけのステージでは最大24の空間姿勢です。45°解放後は順序によってさらに多くの姿勢に到達できます。ランダム正解率は未検証なので表示していません。</small>`}
 function openModal(){updateAnalysis();$('modal').classList.add('show')};function closeModal(){$('modal').classList.remove('show');refresh()}
 $('menu').addEventListener('click',openModal);$('close').addEventListener('click',closeModal);$('return').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 window.addEventListener('resize',refresh);window.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
-window.__twinLab={getState:()=>({stage,step:STEP,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null,gestureDone:!!drag?.done,pointersDown:pointers.size,awaitingReleaseCheck,control:'one-swipe-one-step-release-check'}),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice(),stages:()=>STAGES.map(s=>({title:s.title,step:s.step,views:s.views,path:s.path}))};
+window.__twinLab={getState:()=>({stage,step:STEP,q:q.slice(),moves,finished,free,experiment,hintBlock,dragAxis:drag?.axis||null,gestureDone:!!drag?.done,pointersDown:pointers.size,awaitingReleaseCheck,control:STEP===45?'screen-fixed-release-to-turn':'object-local-90' }),setStage,rotateOnce,setExperiment,showHint:i=>{hintBlock=clamp(i,0,STAGES[stage].shape.length-1);refresh()},clearHint,setPose:pose=>{q=qnormal(pose);displayQ=q.slice();targetQ=q.slice();refresh();checkWin()},goal:()=>STAGES[stage].goalQ.slice(),stats:()=>({layers:depth3()}),matchingPose,steps:()=>STAGES[stage].path.slice(),stages:()=>STAGES.map(s=>({title:s.title,step:s.step,views:s.views,path:s.path}))};
 // Optional target-only peek without opening another panel. Hold the existing legend.
 const gp=$('goalPeek');
 function setPeek(v){peekGoal=!!v;gp.classList.toggle('pressed',peekGoal);refresh();}
